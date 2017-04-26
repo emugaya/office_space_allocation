@@ -25,29 +25,31 @@ class Dojo(object):
         self.staff_who_missed_office_list = []
         self.fellows_who_missed_living_space = []
         self.fellows_who_dont_want_living_space = []
+        self.all_rooms_list =[]
 
     def create_room(self, room_type, *room_name):
+
         rooms_list = list(room_name)[0]
+
         for room in rooms_list:
             if room_type.lower() in self.room_types:
                 room_name_1 = room
                 room = room.lower().strip()
-                if room_type.lower() == 'office':
-                    if room in self.office:
-                        print('Office already exists')
-                        return 'Office already exists.'
-                    else:
+
+                if room not in self.all_rooms_list:
+                    if room_type.lower().strip() == 'office':
                         new_room = Office(room)
                         self.office[room] = Office(room)
+                        self.all_rooms_list.append(room)
                         print('An Office called ' + room_name_1 + ' has been successfully created!')
 
-                if room_type.lower() == 'livingspace':
-                    if room in self.living_space:
-                        print(room.upper()+ ' Living Space already Exists')
-                    else:
+                    if room_type.lower().strip() == 'livingspace':
                         new_room = LivingSpace(room)
                         self.living_space[room] = LivingSpace(room)
+                        self.all_rooms_list.append(room)
                         print('A LivingSpace called ' + room_name_1 + ' has been successfully created!')
+                else:
+                    print('Room with '+ room.upper() + ' name already exists. Try again with new name!')
             else:
                 print("Invalid Room Type")
                 #return "Invalid Room Type"
@@ -260,3 +262,34 @@ class Dojo(object):
                     new_file.write(self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name +", ")
             new_file.write('\n')
             new_file.close()
+    def reallocate_person(self, person_id, new_room_name):
+        new_room_name = new_room_name.lower().strip()
+        if person_id in self.persons.keys():
+            if new_room_name in self.all_rooms_list:
+                #Get Current Persons Room
+                current_room = self.persons[person_id].proom_name
+                #Delete Person From Current Room
+                if current_room in self.living_space:
+                    self.living_space[current_room].members.remove(person_id)
+                if current_room in self.office:
+                    self.office[current_room].members.remove(person_id)
+                #Reallocate Person to New Room
+                if new_room_name in self.living_space:
+                    if len(self.living_space[new_room_name].members) < 4:
+                        self.living_space[new_room_name].members.append(person_id)
+                        self.persons[person_id].proom_name = new_room_name
+                        print('Reallocation succesful')
+                    else:
+                        print('Room full to capcity')
+                if new_room_name in self.office:
+                    if len(self.office[new_room_name].members) < 4:
+                        self.office[new_room_name].members.append(person_id)
+                        self.persons[person_id].proom_name = new_room_name
+                        print('Reallocation succesful')
+                    else:
+                        print('Room full to capacity')
+
+            else:
+                print('Room Does\'t Exist')
+        else:
+            print('Person Doesn\'t Exist')
