@@ -6,6 +6,8 @@ interactive command application.
 Usage:
     dojo.py create_room <room_type> <room_name> ...
     dojo.py add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
+    dojo.py print_room <room_name>
+    dojo.py print_allocations [<filename>]
     my_program (-h | --help | --version)
 
 Options:
@@ -77,15 +79,18 @@ class DojoCLI(cmd.Cmd):
         my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
 
     @docopt_cmd
-    def do_serial(self, arg):
-        """Usage: serial <port> [--baud=<n>] [--timeout=<seconds>]
+    def do_print_room(self, arg):
+        """Usage: print_room <room_name> """
+        room_name = arg['<room_name>']
+        my_dojo.print_room(room_name)
 
-Options:
-    --baud=<n>  Baudrate [default: 9690]
-    --timeout=<seconds>  Time [default: 30]
-        """
+    @docopt_cmd
+    def do_print_allocations(self,arg):
+        """Usage: print_allocations [<filename>] """
+        filename = arg['<filename>']
+        my_dojo.print_allocations(filename)
 
-        print(arg)
+
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""

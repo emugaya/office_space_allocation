@@ -32,7 +32,7 @@ class Dojo(object):
                         print('An Office called ' + room_name_1 + ' has been successfully created!')
 
                 if room_type.lower() == 'livingspace':
-                    if room in self.office:
+                    if room in self.living_space:
                         print(room.upper()+ ' Living Space already Exists')
                     else:
                         new_room = LivingSpace(room)
@@ -76,8 +76,8 @@ class Dojo(object):
                         print ('There are no livingspaces available, Create some')
                         return 'There are no livingspaces available, Create some'
                     living_space_room = random.choice(living_space_list)
-                    self.livingspace[living_space_room].append(person_id)
-                    print(persons[person_id].first_name + ' has been allocated office ' + living_space_room)
+                    self.living_space[living_space_room].members.append(person_id)
+                    print(self.persons[person_id].first_name + ' has been allocated Living Space ' + living_space_room)
             #Allocate Room to staff
             else:
                 self.persons[self.person_id] = Staff(self.person_id, self.last_name, self.first_name, self.person_type)
@@ -97,3 +97,44 @@ class Dojo(object):
         else:
             print('Person is either \'Fellow\' or \'Student\'')
             return 'Person is either \'Fellow\' or \'Student\''
+
+    def print_room(self,room_name):
+        """
+        This method prints names of members in a room supplied
+        """
+        self.room_name = room_name
+
+        if not isinstance(room_name,str):
+            print ("Room name must be a string")
+        if room_name.lower() in self.office:
+            if len(self.office[room_name].members) == 0:
+                print(room_name.upper() + ' has no members')
+            else:
+                print ('Office Room '+ room_name.upper())
+                print('-----------------------------------------------------------------')
+                for name in self.office[room_name].members:
+                    s = self.persons[name].last_name + ' ' +self.persons[name].first_name +','
+                    print(s, end =" "  )
+                print()
+        elif room_name.lower() in self.living_space:
+            if len(self.living_space[room_name].members) == 0:
+                print('Office ' + room_name.upper() + ' has no members')
+            else:
+                print ('Living Space Room '+room_name.upper())
+                print('-----------------------------------------------------------------')
+                for name in self.living_space[room_name].members:
+                    s = self.persons[name].last_name + ' ' +self.persons[name].first_name + ','
+                    print(s ,end=" ")
+                print()
+        else:
+            print('Your room doesn\'t exist')
+
+    def print_allocations(self, filename =None):
+        print('Living Space Allocations')
+        print('-----------------------------------------------------------------')
+        print()
+        for room in self.living_space:
+            self.print_room(room)
+        print('Office Space Allocations')
+        for room in self.office:
+            self.print_room(room)
