@@ -4,7 +4,7 @@ This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 
 Usage:
-    dojo.py create_room <room_type> <room_name>
+    dojo.py create_room <room_type> <room_name> ...
     dojo.py add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
     my_program (-h | --help | --version)
 
@@ -60,7 +60,7 @@ class DojoCLI(cmd.Cmd):
 
     @docopt_cmd
     def do_create_room(self,arg):
-        """ Usage: create_room <room_type> <room_name>"""
+        """ Usage: create_room <room_type> <room_name> ..."""
         room_type = arg['<room_type>']
         room_name = arg['<room_name>']
         my_dojo.create_room(room_type,room_name)

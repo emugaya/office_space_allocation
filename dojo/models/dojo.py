@@ -4,47 +4,43 @@ from dojo.models.room import Office, LivingSpace
 import random
 
 class Dojo(object):
+    """
+    Dojo is an Object that is used to maanage Room Allocation in the Dojo.
+    It has funtions create_room, add_person
+    """
     def __init__(self):
         self.fellow = []
         self.staff = []
         self.living_space = {}
         self.office = {}
         self.persons ={}
-    def create_room(self, room_type, room_name):
-        self.room_type = room_type
-        self.room_name = room_name
-        self.room_types = ['office','livingspace']
-        if not isinstance(room_name,str):
-            print('Room Name Entries must be strings.')
-            return 'Room Name Entries must be strings.'
-        if len(room_name.strip()) ==0:
-            print('You didn\'t provide room name, please try again')
-            return 'You didn\'t provide room name, please try again'
-        if self.room_type.lower() in self.room_types:
-            room_name_1 = self.room_name
-            self.room_name = self.room_name.lower().strip()
-            if self.room_type.lower() == 'office':
-                if self.room_name in self.office:
-                    print('Office already exists')
-                    return 'Office already exists.'
-                else:
-                    new_room = Office(room_name)
-                    self.office[self.room_name] = Office(room_name)
-                    print('An Office called ' + room_name_1 + ' has been successfully created!')
-                    return 'An Office called ' + room_name_1 + ' has been successfully created!'
-            if self.room_type.lower() == 'livingspace':
-                if self.room_name in self.office:
-                    print(room_name.upper()+ ' Living Space already Exists')
-                    return 'Living Space already exists.'
-                else:
-                    new_room = LivingSpace(room_name)
-                    self.living_space[self.room_name] = LivingSpace(room_name)
-                    print('A LivingSpace called ' + room_name_1 + ' has been successfully created!')
-                    return 'A LivingSpace called ' + room_name_1 + ' has been successfully created!'
+        self.room_types = ['office','livingspace'] #Initialize Room types
+        self.person_types =['STAFF', 'FELLOW'] # Initialize person types
+    def create_room(self, room_type, *room_name):
+        rooms_list = list(room_name)[0]
+        for room in rooms_list:
+            if room_type.lower() in self.room_types:
+                room_name_1 = room
+                room = room.lower().strip()
+                if room_type.lower() == 'office':
+                    if room in self.office:
+                        print('Office already exists')
+                        return 'Office already exists.'
+                    else:
+                        new_room = Office(room)
+                        self.office[room] = Office(room)
+                        print('An Office called ' + room_name_1 + ' has been successfully created!')
 
-        else:
-            print("Invalid Room Type")
-            return "Invalid Room Type"
+                if room_type.lower() == 'livingspace':
+                    if room in self.office:
+                        print(room.upper()+ ' Living Space already Exists')
+                    else:
+                        new_room = LivingSpace(room)
+                        self.living_space[room] = LivingSpace(room)
+                        print('A LivingSpace called ' + room_name_1 + ' has been successfully created!')
+            else:
+                print("Invalid Room Type")
+                #return "Invalid Room Type"
 
     def add_person(self, person_id, last_name, first_name, person_type, wants_accommodation = None):
         self.person_id = person_id
@@ -52,9 +48,6 @@ class Dojo(object):
         self.first_name = first_name
         self.person_type = person_type
         self.wants_accommodation = wants_accommodation
-        self.person_types =['STAFF', 'FELLOW']
-        # if not len(self.person_id) and not len(self.last_name) and self.first_name and self.person_type:
-        #     return 'All Fields must be properly filled'
         self.person_type = self.person_type.strip().upper()
         if self.person_type in self.person_types:
             if self.person_id in self.persons:
@@ -63,9 +56,6 @@ class Dojo(object):
             elif person_type.upper() == 'FELLOW':
                 self.persons[self.person_id] = Fellow(self.person_id, self.last_name, self.first_name, self.person_type, self.wants_accommodation)
                 print('Fellow '+ last_name + ' ' + first_name + ' has been successfully added.')
-                #return ('Fellow '+ last_name + ' ' + first_name + ' has been successfully added.')
-                # print(self.persons)
-                #Allocate Fellow Office and optional Living Space
                 offices_list = []
                 for key in self.office.keys():
                     if len(self.office[key].members) < 6:
@@ -76,8 +66,7 @@ class Dojo(object):
                 office = random.choice(offices_list)
                 self.office[office].members.append(person_id)
                 print(self.persons[person_id].first_name + ' has been allocated office ' + office)
-                #break
-                #return self.persons[person_id].first_name + ' has been allocated office ' + office
+                #Check if Fellow Wants Accomodation
                 if wants_accommodation == 'Y':
                     living_space_list = []
                     for key in self.living_space.keys():
@@ -89,16 +78,10 @@ class Dojo(object):
                     living_space_room = random.choice(living_space_list)
                     self.livingspace[living_space_room].append(person_id)
                     print(persons[person_id].first_name + ' has been allocated office ' + living_space_room)
-                    #break
-                    #return persons[person_id].first_name + ' has been allocated office ' + living_space_room
-
-            else: #person_type == 'STAFF':
+            #Allocate Room to staff
+            else:
                 self.persons[self.person_id] = Staff(self.person_id, self.last_name, self.first_name, self.person_type)
                 print('Staff '+ last_name + ' ' + first_name + ' has been successfully added.')
-                #break
-                #return('Staff '+ last_name + ' ' + first_name + ' has been successfully added.')
-                #print(self.persons)
-                #Allocate Staff office
                 offices_list = []
                 for key in self.office.keys():
                     if len(self.office[key].members) < 6:
@@ -114,5 +97,3 @@ class Dojo(object):
         else:
             print('Person is either \'Fellow\' or \'Student\'')
             return 'Person is either \'Fellow\' or \'Student\''
-
-    
