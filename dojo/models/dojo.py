@@ -9,13 +9,23 @@ class Dojo(object):
     It has funtions create_room, add_person
     """
     def __init__(self):
-        self.fellow = []
-        self.staff = []
+        # self.fellow = []
+        # self.staff = []
         self.living_space = {}
         self.office = {}
         self.persons ={}
         self.room_types = ['office','livingspace'] #Initialize Room types
         self.person_types =['STAFF', 'FELLOW'] # Initialize person types
+        self.fellows_with_living_room_list =[]
+        self.fellows_with_office_list = []
+        self.fellows_who_missed_living_space = []
+        self.fellows_who_dont_want_living_space = []
+        self.fellows_who_missed_office = []
+        self.staff_with_office_list =[]
+        self.staff_who_missed_office_list = []
+        self.fellows_who_missed_living_space = []
+        self.fellows_who_dont_want_living_space = []
+
     def create_room(self, room_type, *room_name):
         rooms_list = list(room_name)[0]
         for room in rooms_list:
@@ -42,7 +52,7 @@ class Dojo(object):
                 print("Invalid Room Type")
                 #return "Invalid Room Type"
 
-    def add_person(self, person_id, last_name, first_name, person_type, wants_accommodation = None):
+    def add_person(self, person_id, last_name, first_name, person_type, wants_accommodation = ''):
         self.person_id = person_id
         self.last_name = last_name
         self.first_name = first_name
@@ -61,23 +71,31 @@ class Dojo(object):
                     if len(self.office[key].members) < 6:
                         offices_list.append(key)
                 if not offices_list:
+                    self.fellows_who_missed_office.append(person_id)
                     print('There are no offices available for allocation, create some')
-                    return 'There are no offices available for allocation, create some'
-                office = random.choice(offices_list)
-                self.office[office].members.append(person_id)
-                print(self.persons[person_id].first_name + ' has been allocated office ' + office)
+                    #return 'There are no offices available for allocation, create some'
+                else:
+                    office = random.choice(offices_list)
+                    self.office[office].members.append(person_id)
+                    self.fellows_with_office_list.append(self.person_id)
+                    print(self.persons[person_id].first_name + ' has been allocated office ' + office)
                 #Check if Fellow Wants Accomodation
+                if wants_accommodation =='':
+                    self.fellows_who_dont_want_living_space.append(person_id)
                 if wants_accommodation == 'Y':
                     living_space_list = []
                     for key in self.living_space.keys():
                         if len(self.living_space[key].members) < 4:
                             living_space_list.append(key)
+                            self.fellows_with_living_room_list.append(person_id)
                     if not living_space_list:
-                        print ('There are no livingspaces available, Create some')
-                        return 'There are no livingspaces available, Create some'
-                    living_space_room = random.choice(living_space_list)
-                    self.living_space[living_space_room].members.append(person_id)
-                    print(self.persons[person_id].first_name + ' has been allocated Living Space ' + living_space_room)
+                        self.fellows_who_missed_living_space.append(person_id)
+                        print ('There are no livingspaces available for allocation, Create some')
+
+                    else:
+                        living_space_room = random.choice(living_space_list)
+                        self.living_space[living_space_room].members.append(person_id)
+                        print(self.persons[person_id].first_name + ' has been allocated Living Space ' + living_space_room)
             #Allocate Room to staff
             else:
                 self.persons[self.person_id] = Staff(self.person_id, self.last_name, self.first_name, self.person_type)
@@ -86,7 +104,9 @@ class Dojo(object):
                 for key in self.office.keys():
                     if len(self.office[key].members) < 6:
                         offices_list.append(key)
+                        self.staff_with_office_list.append(person_id)
                 if not offices_list:
+                    self.staff_who_missed_office_list.append(person_id)
                     print('There are no offices available for allocation, create some')
                     return 'There are no offices available for allocation, create some'
                 office = random.choice(offices_list)
@@ -131,16 +151,34 @@ class Dojo(object):
 
     def print_allocations(self, filename=""):
         if not filename:
-            print('Living Space Allocations')
-            print('-----------------------------------------------------------------')
-            print()
-            for room in self.living_space:
-                self.print_room(room)
-            print('Office Space Allocations')
-            for room in self.office:
-                self.print_room(room)
+            for room_name in self.office:
+                if room_name.lower() in self.office:
+                    if len(self.office[room_name].members) == 0:
+                        print(room_name.upper() + ' has no members')
+                        print('\n')
+                    else:
+                        print('\n')
+                        print('Office Room '+ room_name.upper()+'\n')
+                        print('-----------------------------------------------------------------\n')
+                        for name in self.office[room_name].members:
+                             s = (self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                             print(s ,end=" ")
+
+                        print('\n')
+                if room_name.lower() in self.living_space:
+                    if len(self.living_space[room_name].members) == 0:
+                        print('Office ' + room_name.upper() + ' has no members')
+                        print('\n')
+                    else:
+                        print('\n')
+                        print('Living Space Room '+room_name.upper()+'\n')
+                        print('-----------------------------------------------------------------')
+                        for name in self.living_space[room_name].members:
+                            s =self.persons[name].last_name + ' ' +self.persons[name].first_name + ', '
+                            print(s ,end=" ")
+            print('\n')
         else:
-            my_file = open(filename + ".txt", "w")
+            my_file = open(filename + ".txt", "w+")
             #my_file.write('Living Space Allocations\n')
             my_file.write('\n')
             my_file.write('-----------------------------------------------------------------\n')
@@ -148,21 +186,77 @@ class Dojo(object):
             for room_name in self.office:
                 if room_name.lower() in self.office:
                     if len(self.office[room_name].members) == 0:
-                        my_file.write(room_name.upper() + ' has no members')
+                        my_file.write(room_name.upper() + ' has no members\n')
                     else:
+                        my_file.write('\n')
                         my_file.write ('Office Room '+ room_name.upper() +'\n')
                         my_file.write('-----------------------------------------------------------------\n')
                         for name in self.office[room_name].members:
-                            my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                             my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                            #my_file.write(s ,end=" ")
+
+
                         my_file.write('\n')
-                elif room_name.lower() in self.living_space:
+                if room_name.lower() in self.living_space:
                     if len(self.living_space[room_name].members) == 0:
                         my_file.write('Office ' + room_name.upper() + ' has no members')
                     else:
-                        my_file.write ('Living Space Room '+room_name.upper())
-                        my_file.write('-----------------------------------------------------------------')
-                        for name in self.living_space[room_name].members:
-                            s = self.persons[name].last_name + ' ' +self.persons[name].first_name + ','
-                            my_file.write(s ,end=" ")
                         my_file.write('\n')
-                my_file.close()
+                        my_file.write ('Living Space Room '+room_name.upper()+"\n")
+                        my_file.write('-----------------------------------------------------------------\n')
+                        for name in self.living_space[room_name].members:
+                            my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name + ', ')
+                            #my_file.write(s ,end=" ")
+                        my_file.write('\n')
+            my_file.close()
+
+    def print_unallocated(self, filename=''):
+        if not filename:
+            #Print Staff who missed office
+            print('\n')
+            #print('\n')
+            print('Staff who missed office space')
+            print('--------------------------------------------------------------\n')
+            if len(self.staff_who_missed_office_list):
+                for staff in self.staff_who_missed_office_list:
+                    s =(self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name +", ")
+                    print(s ,end=" ")
+            #Print Fellow who missed office
+            print('\n')
+            print('Fellows who missed office space')
+            print('--------------------------------------------------------------\n')
+            if len(self.fellows_who_missed_office):
+                for staff in self.fellows_who_missed_office:
+                    s = (self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name+", ")
+                    print(s ,end=" ")
+            print('\n')
+            print('Fellows who wanted but missed Living Space')
+            print('--------------------------------------------------------------\n')
+            if len(self.fellows_who_missed_living_space):
+                for staff in self.fellows_who_missed_living_space:
+                    s = (self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name+", ")
+                    print(s ,end=" ")
+            print('\n')
+        else:
+            new_file = open(filename + ".txt", "w")
+            #my_file.write('Living Space Allocations\n')
+            new_file.write('Staff who missed office space\n')
+            new_file.write('--------------------------------------------------------------\n')
+            if len(self.staff_who_missed_office_list):
+                for staff in self.staff_who_missed_office_list:
+                    new_file.write(self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name +", ")
+            new_file.write('\n')
+            #Print Fellow who missed office
+            new_file.write('Fellows who missed office space\n')
+            new_file.write('--------------------------------------------------------------\n')
+            if len(self.fellows_who_missed_office):
+                for staff in self.fellows_who_missed_office:
+                    new_file.write(self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name +", ")
+            new_file.write('\n')
+            new_file.write('Fellows who wanted but missed Living Space\n')
+            new_file.write('--------------------------------------------------------------\n')
+            if len(self.fellows_who_missed_living_space):
+                for staff in self.fellows_who_missed_living_space:
+                    new_file.write(self.persons[staff].person_id + ' ' + self.persons[staff].first_name + ' ' +self.persons[staff].last_name +", ")
+            new_file.write('\n')
+            new_file.close()

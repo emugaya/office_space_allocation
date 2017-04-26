@@ -8,6 +8,8 @@ Usage:
     dojo.py add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
     dojo.py print_room <room_name>
     dojo.py print_allocations [<filename>]
+    dojo.py print_unallocated [<filename>]
+
     my_program (-h | --help | --version)
 
 Options:
@@ -89,6 +91,11 @@ class DojoCLI(cmd.Cmd):
         """Usage: print_allocations [<filename>] """
         filename = arg['<filename>']
         my_dojo.print_allocations(filename)
+    @docopt_cmd
+    def do_print_unallocated(self,arg):
+        """Usage: print_unallocated [<filename>] """
+        filename = arg['<filename>']
+        my_dojo.print_unallocated(filename)
 
 
 
