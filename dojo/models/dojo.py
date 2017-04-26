@@ -129,12 +129,40 @@ class Dojo(object):
         else:
             print('Your room doesn\'t exist')
 
-    def print_allocations(self, filename =None):
-        print('Living Space Allocations')
-        print('-----------------------------------------------------------------')
-        print()
-        for room in self.living_space:
-            self.print_room(room)
-        print('Office Space Allocations')
-        for room in self.office:
-            self.print_room(room)
+    def print_allocations(self, filename=""):
+        if not filename:
+            print('Living Space Allocations')
+            print('-----------------------------------------------------------------')
+            print()
+            for room in self.living_space:
+                self.print_room(room)
+            print('Office Space Allocations')
+            for room in self.office:
+                self.print_room(room)
+        else:
+            my_file = open(filename + ".txt", "w")
+            #my_file.write('Living Space Allocations\n')
+            my_file.write('\n')
+            my_file.write('-----------------------------------------------------------------\n')
+            #my_file()
+            for room_name in self.office:
+                if room_name.lower() in self.office:
+                    if len(self.office[room_name].members) == 0:
+                        my_file.write(room_name.upper() + ' has no members')
+                    else:
+                        my_file.write ('Office Room '+ room_name.upper() +'\n')
+                        my_file.write('-----------------------------------------------------------------\n')
+                        for name in self.office[room_name].members:
+                            my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                        my_file.write('\n')
+                elif room_name.lower() in self.living_space:
+                    if len(self.living_space[room_name].members) == 0:
+                        my_file.write('Office ' + room_name.upper() + ' has no members')
+                    else:
+                        my_file.write ('Living Space Room '+room_name.upper())
+                        my_file.write('-----------------------------------------------------------------')
+                        for name in self.living_space[room_name].members:
+                            s = self.persons[name].last_name + ' ' +self.persons[name].first_name + ','
+                            my_file.write(s ,end=" ")
+                        my_file.write('\n')
+                my_file.close()
