@@ -9,6 +9,7 @@ Usage:
     dojo.py print_room <room_name>
     dojo.py print_allocations [<filename>]
     dojo.py print_unallocated [<filename>]
+    dojo.py reallocate_person <person_identifier> <new_room_name>
 
     my_program (-h | --help | --version)
 
@@ -91,11 +92,19 @@ class DojoCLI(cmd.Cmd):
         """Usage: print_allocations [<filename>] """
         filename = arg['<filename>']
         my_dojo.print_allocations(filename)
+
     @docopt_cmd
     def do_print_unallocated(self,arg):
         """Usage: print_unallocated [<filename>] """
         filename = arg['<filename>']
         my_dojo.print_unallocated(filename)
+
+    @docopt_cmd
+    def do_reallocate_person(self,arg):
+        """Usage: reallocate_person <person_identifier> <new_room_name>  """
+        person_identifier = arg['<person_identifier>']
+        new_room_name = arg['<new_room_name>']
+        my_dojo.reallocate_person(person_identifier, new_room_name)
 
 
 
