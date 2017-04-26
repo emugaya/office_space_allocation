@@ -8,6 +8,11 @@ class TestAddPersonRoom(unittest.TestCase):
     def test_add_person_succesfully(self):
         my_dojo = Dojo()
         initial_person_count = 0
+        blue_office = my_dojo.create_room('office', 'blue')
+        white_room = my_dojo.create_room('Office','White')
+        yellow_room = my_dojo.create_room('Office','Yellow')
+        brown_living_space = my_dojo.create_room('LivingSpace', 'Brown')
+        pink_living_space = my_dojo.create_room('LivingSpace', 'Pink')
         add_elvis = my_dojo.add_person('1001','Mulinde','Elvis', 'Staff')
         add_ezekiel = my_dojo.add_person('1002','Mugaya','Ezekiel','Fellow','N')
         self.assertEqual(my_dojo.add_person('1003','Kironde','Victor','Staff'),
@@ -21,6 +26,10 @@ class TestAddPersonRoom(unittest.TestCase):
 
     def test_adding_existing_person(self):
         my_dojo = Dojo()
+        blue_office = my_dojo.create_room('office', 'blue')
+        white_room = my_dojo.create_room('Office','White')
+        yellow_room = my_dojo.create_room('Office','Yellow')
+        brown_living_space = my_dojo.create_room('LivingSpace', 'Brown')
         add_elvis = my_dojo.add_person('1001','Mulinde','Elvis', 'Staff')
         add_ezekiel = my_dojo.add_person('1002','Mugaya','Ezekiel','Fellow','N')
         self.assertEqual(my_dojo.add_person('1001','Mulinde','Elvis', 'Staff'),
@@ -32,20 +41,13 @@ class TestAddPersonRoom(unittest.TestCase):
 
     def test_adding_person_with_invalid_person_type(self):
         my_dojo = Dojo()
+        blue_office = my_dojo.create_room('office', 'blue')
+        white_room = my_dojo.create_room('Office','White')
+        yellow_room = my_dojo.create_room('Office','Yellow')
+        brown_living_space = my_dojo.create_room('LivingSpace', 'Brown')
         self.assertEqual(my_dojo.add_person('1001','Mulinde','Elvis','Chef'),
                                        'Person is either \'Fellow\' or \'Student\'',
                                        msg ='Person type must be Fellow or Student')
         self.assertEqual(my_dojo.add_person('1002','Mugaya','Ezekiel','Musician','N'),
                                        'Person is either \'Fellow\' or \'Student\'',
                                        msg ='Person type must be Fellow or Student')
-
-    def test_allocate_room_when_adding_person(self):
-        my_dojo = Dojo()
-        self.assertEqual(my_dojo.allocate_room('id','room_type'), 'Ezekiel has been allocated a Room',
-                                          msg='Room Allocation Failed')
-
-    def test_allocate_living_room_to_staff(self):
-        my_dojo = Dojo()
-        self.assertEqual(my_dojo.allocate_room('id','room_type'),
-                                               'Staff are not allocated Living Space',
-                                               msg ='Should not allocate Living Space to Staff')
