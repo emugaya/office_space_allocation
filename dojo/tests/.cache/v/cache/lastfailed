@@ -1,1 +1,4 @@
-{}
+{
+  "test_add_person.py::TestAddPersonRoom::test_allocate_living_room_to_staff": true,
+  "test_add_person.py::TestAddPersonRoom::test_allocate_room_when_adding_person": true
+}

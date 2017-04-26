@@ -4,3 +4,5 @@ staticfiles
 .en
 __pycache__
 CP1-Python-OfficeSpaceAllocationpublicversion.pdf
+.cache
+lastfailed

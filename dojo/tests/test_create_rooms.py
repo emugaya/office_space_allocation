@@ -11,8 +11,7 @@ class TestCreateRoom(unittest.TestCase):
         brown_living_space = my_dojo.create_room('LivingSpace', 'Brown')
         self.assertTrue(blue_office)
         self.assertTrue(brown_living_space)
-        # self.assertIsInstance(blue_office, 'Office'),
-        #                       msg ='Room Created is not an Instance of Office')
+        # self.assertIsInstance(blue_office, 'Office')
         self.assertEqual(my_dojo.create_room('Office','Mugaya'), 'An Office called Mugaya has been successfully created!',
                               msg='Room Creation not succesful')
         new_room_count =len(my_dojo.living_space) + len(my_dojo.office)
