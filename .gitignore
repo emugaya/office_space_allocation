@@ -1,0 +1,9 @@
+dojoenv
+*.pyc
+staticfiles
+.en
+__pycache__
+CP1-Python-OfficeSpaceAllocationpublicversion.pdf
+.cache
+docopt_interactive_example.py
+lastfailed
