@@ -5,5 +5,11 @@ staticfiles
 __pycache__
 CP1-Python-OfficeSpaceAllocationpublicversion.pdf
 .cache
-docopt_interactive_example.py
 lastfailed
+__init__.py
+mugaya.txt
+test_data.txt
+resources
+*.db
+read_data.txt
+*.xml
