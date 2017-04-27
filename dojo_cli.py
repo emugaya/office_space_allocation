@@ -66,10 +66,12 @@ def docopt_cmd(func):
 
 my_dojo = Dojo()
 class DojoCLI(cmd.Cmd):
-    intro = 'Welcome to Dojo!:' \
+    intro = '                         Welcome to Dojo!:\n' \
+        + 'You can perform the list of command below\n'\
+        + 'create_room <room_type> <room_name> '\
         + ' (Type help for a list of commands that you will be using to .)'
     prompt = '(Dojo: Enter Command to Proceed:) '
-    file = None
+    # file = None
     my_dojo = Dojo()
 
     @docopt_cmd
