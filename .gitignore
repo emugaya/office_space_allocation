@@ -12,3 +12,4 @@ test_data.txt
 resources
 *.db
 read_data.txt
+*.xml
