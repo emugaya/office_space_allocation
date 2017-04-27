@@ -6,6 +6,13 @@ interactive command application.
 Usage:
     dojo.py create_room <room_type> <room_name> ...
     dojo.py add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
+    dojo.py print_room <room_name>
+    dojo.py print_allocations [<filename>]
+    dojo.py print_unallocated [<filename>]
+    dojo.py reallocate_person <person_identifier> <new_room_name>
+    dojo.py save_state [<--db=sqlite_database>]
+    dojo.py load_people <filename>
+
     my_program (-h | --help | --version)
 
 Options:
@@ -19,8 +26,14 @@ import sys
 import cmd
 from docopt import docopt, DocoptExit
 from dojo.models.dojo import Dojo
+import pickle
 
-my_dojo = Dojo()
+# from sqlalchemy import create_engine
+# from sqlalchemy.ext.decorator import declarative_base
+# from status import Status #Importing the class tables
+# from sqlalchemy import sessionmaker
+
+
 def docopt_cmd(func):
     """
     This decorator is used to simplify the try/except block and pass the result
@@ -51,19 +64,22 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
-
+my_dojo = Dojo()
 class DojoCLI(cmd.Cmd):
-    intro = 'Welcome to Dojo!:' \
+    intro = '                         Welcome to Dojo!:\n' \
+        + 'You can perform the list of command below\n'\
+        + 'create_room <room_type> <room_name> '\
         + ' (Type help for a list of commands that you will be using to .)'
     prompt = '(Dojo: Enter Command to Proceed:) '
-    file = None
+    # file = None
+    my_dojo = Dojo()
 
     @docopt_cmd
     def do_create_room(self,arg):
         """ Usage: create_room <room_type> <room_name> ..."""
         room_type = arg['<room_type>']
         room_name = arg['<room_name>']
-        my_dojo.create_room(room_type,room_name)
+        print(my_dojo.create_room(room_type,room_name))
 
     @docopt_cmd
     def do_add_person(self, arg):
@@ -74,18 +90,52 @@ class DojoCLI(cmd.Cmd):
         person_type = arg['<person_type>']
         wants_accommodation = arg['<wants_accommodation>']
 
-        my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+        print(my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation))
 
     @docopt_cmd
-    def do_serial(self, arg):
-        """Usage: serial <port> [--baud=<n>] [--timeout=<seconds>]
+    def do_print_room(self, arg):
+        """Usage: print_room <room_name> """
+        room_name = arg['<room_name>']
+        print(my_dojo.print_room(room_name))
 
-Options:
-    --baud=<n>  Baudrate [default: 9690]
-    --timeout=<seconds>  Time [default: 30]
-        """
+    @docopt_cmd
+    def do_print_allocations(self,arg):
+        """Usage: print_allocations [<filename>] """
+        filename = arg['<filename>']
+        print(my_dojo.print_allocations(filename))
 
-        print(arg)
+    @docopt_cmd
+    def do_print_unallocated(self,arg):
+        """Usage: print_unallocated [<filename>] """
+        filename = arg['<filename>']
+        my_dojo.print_unallocated(filename)
+
+    @docopt_cmd
+    def do_load_people(self, arg):
+        """Usage: load_people <filename> """
+        filename = arg['<filename>']
+        my_dojo.load_people(filename)
+
+    @docopt_cmd
+    def do_reallocate_person(self,arg):
+        """Usage: reallocate_person <person_identifier> <new_room_name>  """
+        person_identifier = arg['<person_identifier>']
+        new_room_name = arg['<new_room_name>']
+        my_dojo.reallocate_person(person_identifier, new_room_name)
+
+    @docopt_cmd
+    def do_save_state(self, arg):
+        """Usage: save_state [<--db=sqlite_database>] """
+        sqlite_database = arg['<--db=sqlite_database>']
+        my_dojo.save_state(sqlite_database)
+
+    @docopt_cmd
+    def do_load_state(self,arg):
+        """Usage: save_state [<sqlite_database>] """
+        sqlite_database = arg['<sqlite_database>']
+        my_dojo.load_state(sqlite_database)
+
+
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
