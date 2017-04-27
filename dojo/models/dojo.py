@@ -1,7 +1,16 @@
 # from myapp.dojo.models.person import Person, Staff, Fellow
 from dojo.models.person import Person, Staff, Fellow
 from dojo.models.room import Office, LivingSpace
+
+from dojo.database.database import *
+
+
 import random
+import pickle
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 class Dojo(object):
     """
@@ -24,46 +33,43 @@ class Dojo(object):
         self.fellows_who_missed_living_space = []
         self.fellows_who_dont_want_living_space = []
         self.all_rooms_list =[]
+        self.max_number_of_people_in_office = 6
+        self.max_number_of_people_in_living_space = 4
 
     def create_room(self, room_type, *room_name):
-
         rooms_list = list(room_name)[0]
-
         for room in rooms_list:
             if room_type.lower() in self.room_types:
                 room_name_1 = room
                 room = room.lower().strip()
-
                 if room not in self.all_rooms_list:
                     if room_type.lower().strip() == 'office':
                         new_room = Office(room)
                         self.office[room] = Office(room)
                         self.all_rooms_list.append(room)
-                        print('An Office called ' + room_name_1 + ' has been successfully created!')
-
+                        return('An Office called ' + room_name_1 + ' has been successfully created!')
                     if room_type.lower().strip() == 'livingspace':
                         new_room = LivingSpace(room)
                         self.living_space[room] = LivingSpace(room)
                         self.all_rooms_list.append(room)
-                        print('A LivingSpace called ' + room_name_1 + ' has been successfully created!')
+                        return('A LivingSpace called ' + room_name_1 + ' has been successfully created!')
                 else:
-                    print('Room with '+ room.upper() + ' name already exists. Try again with new name!')
+                    return('Room with '+ room.upper() + ' name already exists. Try again with new name!')
             else:
-                print("Invalid Room Type")
-                #return "Invalid Room Type"
+                return("Invalid Room Type")
 
     def add_person(self, person_id, last_name, first_name, person_type, wants_accommodation = ''):
         person_type = person_type.strip().upper()
         if person_type in self.person_types:
             if person_id in self.persons:
                 print('Person already exists')
-                return 'Person already exists'
+                # return 'Person already exists'
             elif person_type.upper() == 'FELLOW':
                 self.persons[person_id] = Fellow(person_id, last_name, first_name, person_type, wants_accommodation)
                 print('Fellow '+ last_name + ' ' + first_name + ' has been successfully added.')
                 offices_list = []
                 for key in self.office.keys():
-                    if len(self.office[key].members) < 6:
+                    if len(self.office[key].members) < self.max_number_of_people_in_office:
                         offices_list.append(key)
                 if not offices_list:
                     self.fellows_who_missed_office.append(person_id)
@@ -82,7 +88,7 @@ class Dojo(object):
                 if wants_accommodation == 'Y':
                     living_space_list = []
                     for key in self.living_space.keys():
-                        if len(self.living_space[key].members) < 4:
+                        if len(self.living_space[key].members) < self.max_number_of_people_in_living_space:
                             living_space_list.append(key)
                             self.fellows_with_living_room_list.append(person_id)
                     if not living_space_list: #Check if living spaces are not available and inform user
@@ -98,7 +104,7 @@ class Dojo(object):
                     print('Staff '+ last_name + ' ' + first_name + ' has been successfully added.')
                     offices_list = []
                     for key in self.office.keys():
-                        if len(self.office[key].members) < 6:
+                        if len(self.office[key].members) < self.max_number_of_people_in_office:
                             offices_list.append(key)
                             self.staff_with_office_list.append(person_id)
                     if not offices_list:
@@ -260,6 +266,10 @@ class Dojo(object):
         """
         reallocate_person method is used to change a Fellow from one living space to another living space,
         if the fellow opted to have living space. It also changes Fellows and staff from one room to another
+
+        :param person_id:
+        :param new_room_name:
+        :return
         """
         new_room_name = new_room_name.lower().strip()
         if person_id in self.persons.keys():
@@ -282,23 +292,22 @@ class Dojo(object):
                             print('Person already belongs to that room')
                         else:
                             #Delete Person From Living Room
-                            if current_living_space in self.living_space:
-                                self.living_space[current_room].members.remove(person_id)
+
                             #Add person to new Living Room
-                            if len(self.living_space[new_room_name].members) < 4:
+                            if len(self.living_space[new_room_name].members) < self.max_number_of_people_in_living_space:
+                                self.living_space[current_room].members.remove(person_id)
                                 self.living_space[new_room_name].members.append(person_id)
                                 self.persons[person_id].lroom_name = new_room_name
                                 print('Reallocation succesful')
                             else:
-                                print('Room full to capcity')
+                                print('Rooms full to capcity')
                 if new_room_name in self.office:
                     if current_office_room == new_room_name:
                         print('Person already belongs to that room')
                     else:
                         #Delete Person from current Office and assign them new Office
-                        if current_office_room in self.office:
+                        if len(self.office[new_room_name].members) < self.max_number_of_people_in_office:
                             self.office[current_office_room].members.remove(person_id)
-                        if len(self.office[new_room_name].members) < 6:
                             self.office[new_room_name].members.append(person_id)
                             self.persons[person_id].proom_name = new_room_name
                             print('Reallocation succesful')
@@ -313,25 +322,58 @@ class Dojo(object):
         if not filename:
             print('Please specify a text file th file you want to read data from')
         else:
-            my_file_read = open(filename,'r')
-            for num, line in enumerate(my_file_read, 1):
-                line = line.strip()
-                list_of_arguments_in_file = line.split()
-                print(list_of_arguments_in_file)
-                if len(list_of_arguments_in_file) == 5:
-                    person_id = list_of_arguments_in_file[0]
-                    last_name = list_of_arguments_in_file[1]
-                    first_name = list_of_arguments_in_file[2]
-                    person_type = list_of_arguments_in_file[3]
-                    wants_accommodation = list_of_arguments_in_file[4]
-                    self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
-                elif len(list_of_arguments_in_file) == 4:
-                    person_id = list_of_arguments_in_file[0]
-                    last_name = list_of_arguments_in_file[1]
-                    first_name = list_of_arguments_in_file[2]
-                    person_type = list_of_arguments_in_file[3]
-                    self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
-                else:
-                    print("Arguments in this line were incorrect: line(" + str(num)+')')
+            try:
+                my_file_read = open(filename + '.txt','r')
+                for num, line in enumerate(my_file_read, 1):
+                    line = line.strip()
+                    list_of_arguments_in_file = line.split()
+                    print(list_of_arguments_in_file)
+                    if len(list_of_arguments_in_file) == 5:
+                        person_id = list_of_arguments_in_file[0]
+                        last_name = list_of_arguments_in_file[1]
+                        first_name = list_of_arguments_in_file[2]
+                        person_type = list_of_arguments_in_file[3]
+                        wants_accommodation = list_of_arguments_in_file[4]
+                        self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+                    elif len(list_of_arguments_in_file) == 4:
+                        person_id = list_of_arguments_in_file[0]
+                        last_name = list_of_arguments_in_file[1]
+                        first_name = list_of_arguments_in_file[2]
+                        person_type = list_of_arguments_in_file[3]
+                        self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+                    else:
+                        print("Arguments in this line were incorrect: line(" + str(num)+')')
+            except:
+                print('File Provided is either not a .txt or it doesnt exist')
 
-                #print(line)
+    def save_state(self, my_dojo_state='demo'):
+        #my_dojo_state = my_dojo_state.strip().lower()
+        status = open("status.pickle", "wb")
+        pickle.dump(self, status, protocol=pickle.HIGHEST_PROTOCOL)
+        status.close()
+        status_file = open("status.pickle", "rb")
+        status_bin = status_file.read()
+        status_engine = create_engine('sqlite:///dojo_state.db', echo=False)
+        Base = declarative_base()
+        Base.metadata.create_all(status_engine)
+
+        saved_state = DojoDatabase(state_name = my_dojo_state, state_file = status_bin)
+        some_session = sessionmaker(bind=status_engine)
+        session = sessionmaker(bind=status_engine)
+        session = some_session()
+        session.add(saved_state)
+        session.commit()
+        status.close()
+    def load_state(self, my_dojo_state):
+        if not my_dojo_state:
+            print("Please Specify Database")
+            return None
+        else:
+            my_dojo_state = my_dojo_state.strip().lower()
+            engine = create_engine('sqlite:///dojo_state.db', echo=False)
+            Session = sessionmaker(bind=engine)
+            session = Session()
+            for back in session.query(DojoDatabase).filter(DojoDatabase.state_name == my_dojo_state):
+                requested_state = pickle.loads(back.state_file)
+            self = requested_state
+            #DojoCLI(my_dojo=requested_state).cmdloop()

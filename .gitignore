@@ -10,3 +10,5 @@ __init__.py
 mugaya.txt
 test_data.txt
 resources
+*.db
+read_data.txt
