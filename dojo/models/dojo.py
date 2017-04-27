@@ -304,8 +304,34 @@ class Dojo(object):
                             print('Reallocation succesful')
                         else:
                             print('Room full to capacity')
-
             else:
                 print('Room Does\'t Exist')
         else:
             print('Person Doesn\'t Exist')
+
+    def load_people(self, filename):
+        if not filename:
+            print('Please specify a text file th file you want to read data from')
+        else:
+            my_file_read = open(filename,'r')
+            for num, line in enumerate(my_file_read, 1):
+                line = line.strip()
+                list_of_arguments_in_file = line.split()
+                print(list_of_arguments_in_file)
+                if len(list_of_arguments_in_file) == 5:
+                    person_id = list_of_arguments_in_file[0]
+                    last_name = list_of_arguments_in_file[1]
+                    first_name = list_of_arguments_in_file[2]
+                    person_type = list_of_arguments_in_file[3]
+                    wants_accommodation = list_of_arguments_in_file[4]
+                    self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+                elif len(list_of_arguments_in_file) == 4:
+                    person_id = list_of_arguments_in_file[0]
+                    last_name = list_of_arguments_in_file[1]
+                    first_name = list_of_arguments_in_file[2]
+                    person_type = list_of_arguments_in_file[3]
+                    self.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+                else:
+                    print("Arguments in this line were incorrect: line(" + str(num)+')')
+
+                #print(line)
