@@ -10,6 +10,8 @@ Usage:
     dojo.py print_allocations [<filename>]
     dojo.py print_unallocated [<filename>]
     dojo.py reallocate_person <person_identifier> <new_room_name>
+    dojo.py load_people [<filename>]
+
 
     my_program (-h | --help | --version)
 
@@ -106,7 +108,11 @@ class DojoCLI(cmd.Cmd):
         new_room_name = arg['<new_room_name>']
         my_dojo.reallocate_person(person_identifier, new_room_name)
 
-
+    @docopt_cmd
+    def do_load_people(self,arg):
+        """Usage: load_people [<filename>] """
+        filename = arg['<filename>']
+        my_dojo.load_people(filename)
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
