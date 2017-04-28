@@ -72,14 +72,14 @@ class DojoCLI(cmd.Cmd):
         + ' (Type help for a list of commands that you will be using to .)'
     prompt = '(Dojo: Enter Command to Proceed:) '
     # file = None
-    my_dojo = Dojo()
+
 
     @docopt_cmd
     def do_create_room(self,arg):
         """ Usage: create_room <room_type> <room_name> ..."""
         room_type = arg['<room_type>']
         room_name = arg['<room_name>']
-        print(my_dojo.create_room(room_type,room_name))
+        my_dojo.create_room(room_type,room_name)
 
     @docopt_cmd
     def do_add_person(self, arg):
@@ -90,19 +90,19 @@ class DojoCLI(cmd.Cmd):
         person_type = arg['<person_type>']
         wants_accommodation = arg['<wants_accommodation>']
 
-        print(my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation))
+        my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
 
     @docopt_cmd
     def do_print_room(self, arg):
         """Usage: print_room <room_name> """
         room_name = arg['<room_name>']
-        print(my_dojo.print_room(room_name))
+        my_dojo.print_room(room_name)
 
     @docopt_cmd
     def do_print_allocations(self,arg):
         """Usage: print_allocations [<filename>] """
         filename = arg['<filename>']
-        print(my_dojo.print_allocations(filename))
+        my_dojo.print_allocations(filename)
 
     @docopt_cmd
     def do_print_unallocated(self,arg):
@@ -133,7 +133,7 @@ class DojoCLI(cmd.Cmd):
     def do_load_state(self,arg):
         """Usage: save_state [<sqlite_database>] """
         sqlite_database = arg['<sqlite_database>']
-        my_dojo.load_state(sqlite_database)
+        DojoCLI(my_dojo.load_state(sqlite_database)).cmdloop()
 
 
 
