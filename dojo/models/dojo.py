@@ -1,8 +1,8 @@
 # from myapp.dojo.models.person import Person, Staff, Fellow
-from dojo.models.person import Person, Staff, Fellow
-from dojo.models.room import Office, LivingSpace
+from ...dojo.models.person import Person, Staff, Fellow
+from ...dojo.models.room import Office, LivingSpace
 
-from dojo.database.database import *
+from ...dojo.database.database import *
 
 
 import random
@@ -82,15 +82,15 @@ class Dojo(object):
             if person_id in self.persons:
                 print('Person already exists')
             else:
-                if person_type in self.person_types: #Check if Person is Staff or Fellow and create them.
-                    person_id = person_id.strip().lower()
-                    self.persons[person_id] = Fellow(person_id, last_name, first_name, person_type, wants_accommodation)
-                    print(last_name.upper() + ' ' + first_name.upper() + ' has been successfully added.')
-                    #Call Allocate room method to allocate rooms for this person
-                    self.allocate_room(person_id, person_type, wants_accommodation)
-                else:
-                    #Alerts admin that the person type supplied is not correct
-                    print("Your person type is incorrect. It must be STAFF or FELLOW")
+                 #Check if Person is Staff or Fellow and create them.
+                person_id = person_id.strip().lower()
+                self.persons[person_id] = Fellow(person_id, last_name, first_name, person_type, wants_accommodation)
+                print(last_name.upper() + ' ' + first_name.upper() + ' has been successfully added.')
+                #Call Allocate room method to allocate rooms for this person
+                self.allocate_room(person_id, person_type, wants_accommodation)
+        else:
+            #Alerts admin that the person type supplied is not correct
+            print("Your person type is incorrect. It must be STAFF or FELLOW")
 
     def allocate_room(self, person_id, person_type, wants_accommodation = ''):
         """
@@ -201,7 +201,7 @@ class Dojo(object):
                     print('Office Room '+ room_name.upper()+'\n')
                     print('-----------------------------------------------------------------\n')
                     for name in self.office[room_name].members:
-                         s = (self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                         s = (self.persons[name].person_id + ' '+self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
                          print(s ,end=" ")
 
                     print('\n')
@@ -211,7 +211,7 @@ class Dojo(object):
                     print('Living Space Room '+room_name.upper()+'\n')
                     print('-----------------------------------------------------------------')
                     for name in self.living_space[room_name].members:
-                        s =self.persons[name].last_name + ' ' +self.persons[name].first_name + ', '
+                        s =(self.persons[name].person_id + ' '+self.persons[name].last_name + ' ' +self.persons[name].first_name + ', ')
                         print(s ,end=" ")
             print('\n')
         else:
@@ -226,7 +226,7 @@ class Dojo(object):
                     my_file.write ('Office Room '+ room_name.upper() +'\n')
                     my_file.write('-----------------------------------------------------------------\n')
                     for name in self.office[room_name].members:
-                         my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
+                         my_file.write(self.persons[staff].person_id + ' '+self.persons[name].last_name + ' ' +self.persons[name].first_name +', ')
                     my_file.write('\n')
                 #Write Living Spaces to File
                 if room_name.lower() in self.living_space:
@@ -234,7 +234,7 @@ class Dojo(object):
                     my_file.write ('Living Space Room '+room_name.upper()+"\n")
                     my_file.write('-----------------------------------------------------------------\n')
                     for name in self.living_space[room_name].members:
-                        my_file.write(self.persons[name].last_name + ' ' +self.persons[name].first_name + ', ')
+                        my_file.write(self.persons[staff].person_id + ' '+self.persons[name].last_name + ' ' +self.persons[name].first_name + ', ')
                         my_file.write('\n')
             my_file.close() #Close File after writing
 
@@ -352,8 +352,13 @@ class Dojo(object):
             print('Person Doesn\'t Exist')
 
     def load_people(self, filename):
+        """
+        This method is used to add people(staff or fellows) to the dojo by specifying the text file that has the people to be loaded.
+        It Reads the file line by line. It notifies the use lines that were not succesful
+        :params filename: This is the  text filename (e.g filename.txt) that you want to load data from.
+        """
         if not filename:
-            print('Please specify a text file th file you want to read data from')
+            print('Please specify name of the file you want to read data from')
         else:
             try:
                 my_file_read = open(filename + '.txt','r')
@@ -380,6 +385,9 @@ class Dojo(object):
                 print('File Provided is either not a .txt or it doesnt exist')
 
     def save_state(self, my_dojo_state='demo'):
+        """
+        This method is supposed to persist the Dojo object to the database
+        """
         #my_dojo_state = my_dojo_state.strip().lower()
         status = open("status.pickle", "wb")
         pickle.dump(self, status, protocol=pickle.HIGHEST_PROTOCOL)
@@ -390,23 +398,26 @@ class Dojo(object):
         Base = declarative_base()
         Base.metadata.create_all(status_engine)
 
-        saved_state = DojoDatabase(state_name = my_dojo_state, state_file = status_bin)
+        saved_state = DojoDatabase(state_name = 'demo', state_file = status_bin)
         some_session = sessionmaker(bind=status_engine)
         session = sessionmaker(bind=status_engine)
         session = some_session()
         session.add(saved_state)
         session.commit()
         status.close()
+
     def load_state(self, my_dojo_state):
+        """
+        This method is supposed to restore previous or persisted state of the dojo from the database
+        """
         if not my_dojo_state:
             print("Please Specify Database")
 
         else:
-            my_dojo_state = my_dojo_state.strip().lower()
             engine = create_engine('sqlite:///dojo_state.db', echo=False)
             Session = sessionmaker(bind=engine)
             session = Session()
-            for back in session.query(DojoDatabase).filter(DojoDatabase.state_name == my_dojo_state):
+            for back in session.query(DojoDatabase).filter(DojoDatabase.state_name == 'demo'):
                 requested_state = pickle.loads(back.state_file)
-            self = requested_state
+                return requested_state
             #DojoCLI(my_dojo=requested_state).cmdloop()
