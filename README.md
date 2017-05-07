@@ -14,6 +14,7 @@ Fellows have a choice to choose a living space or not. This system will be used 
 1. Make sure you have Python 3.5.2 or later
 2. Set your environment varibles using the settings in the requirements.txt
 3. Go to the root folder of the cloned Application and run dojo_cli.py
+4. The Application has been developed and tested on Windows 10.
 
 # Functions Implemented and Working:
 1. create_room <room_type> <room_name> ... - Creates rooms in the Dojo. Using this command, the user should be able to create as many rooms as possible by specifying multiple room names after the create_room command.
@@ -28,12 +29,12 @@ Fellows have a choice to choose a living space or not. This system will be used 
 
 6. reallocate_person <person_identifier> <new_room_name> - Reallocate the person with person_identifier to new_room_name.
 
-7. load_people - Adds people to rooms from a txt file. See Appendix 1A for text input format.
+7. load_people - Adds people to rooms from a txt file. This saves lines with errors to a file errors.txt in the root folder
 
-# Functions that need to be completed and collaboration on:
+8. save_state [--db=sqlite_database] - Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified. This metthod takes a name of sqlite database you need to save data. It doesn't allow saving data t an already existing database. This can be enabled after ensuring that already existing records are not replicated. 
 
-8. save_state [--db=sqlite_database] - Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified.
+9. load_state <sqlite_database> - Loads data from a database into the application. This requires some one to enter an already existing database that was saved using the save_state method.
 
-9. load_state <sqlite_database> - Loads data from a database into the application.
-
-
+# Tests:
+This application has unittests in the folder dojo\tests.Please suggest areas for further testing.
+      
