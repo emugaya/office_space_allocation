@@ -1,0 +1,11 @@
+Tests import.
+from ...dojo.models.person import Person, Staff, Fellow
+from ...dojo.models.room import Office, LivingSpace
+
+from ...dojo.database.database import *
+
+
+Docopt CLI import
+from dojo.models.person import Person, Staff, Fellow
+from dojo.models.room import Office, LivingSpace
+from dojo.database.database import *

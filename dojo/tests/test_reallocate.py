@@ -26,7 +26,7 @@ class TestReallocatePerson(unittest.TestCase):
 
     def test_fail_reallocating_staff_to_living_space(self):
         """
-        This test case is to ensure that staff are assigned to livingspace during reallocation
+        This test case is to ensure that staff are not assigned to livingspace during reallocation
         """
         my_dojo = Dojo()
         my_dojo.create_room('Office', ['Blue'])

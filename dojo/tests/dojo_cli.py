@@ -10,7 +10,7 @@ Usage:
     dojo.py print_allocations [<filename>]
     dojo.py print_unallocated [<filename>]
     dojo.py reallocate_person <person_identifier> <new_room_name>
-    dojo.py save_state <--db=sqlite_database>
+    dojo.py save_state [<--db=sqlite_database>]
     dojo.py load_people <filename>
 
     my_program (-h | --help | --version)
@@ -25,7 +25,7 @@ Options:
 import sys
 import cmd
 from docopt import docopt, DocoptExit
-from dojo.models.dojo import Dojo
+from dojo.models.dojo import *
 import pickle
 
 # from sqlalchemy import create_engine
@@ -68,6 +68,7 @@ my_dojo = Dojo()
 class DojoCLI(cmd.Cmd):
     intro = '                         Welcome to Dojo!:\n' \
         + 'You can perform the list of command below\n'\
+        + 'create_room <room_type> <room_name> '\
         + ' (Type help for a list of commands that you will be using to .)'
     prompt = '(Dojo: Enter Command to Proceed:) '
     # file = None
@@ -124,15 +125,16 @@ class DojoCLI(cmd.Cmd):
 
     @docopt_cmd
     def do_save_state(self, arg):
-        """Usage: save_state <--db=sqlite_database> """
-        sqlite_database_name = arg['<--db=sqlite_database>']
-        my_dojo.save_state(sqlite_database_name)
+        """Usage: save_state [<--db=sqlite_database>] """
+        sqlite_database = arg['<--db=sqlite_database>']
+        my_dojo.save_state(sqlite_database)
 
     @docopt_cmd
     def do_load_state(self,arg):
         """Usage: save_state [<sqlite_database>] """
         sqlite_database = arg['<sqlite_database>']
-        my_dojo.load_state(sqlite_database)
+        DojoCLI(my_dojo.load_state(sqlite_database)).cmdloop()
+
 
 
     def do_quit(self, arg):
