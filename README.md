@@ -1,7 +1,7 @@
 # Office Space Allocation
 This system will be used to automatically allocate spaces to people at random, at The Dojo, one of Andela Kenya’s facilities.
 # Constraints
-The Dojo has rooms, which can be offices or living spaces. An office can accommodate a maximum of 6 people. 
+The Dojo has rooms, which can be offices or living spaces. An office can accommodate a maximum of 6 people.
 
 A living space can accommodate a maximum of 4 people. A person to be allocated could be a fellow or staff. Staff cannot be allocated living spaces.
 
@@ -23,7 +23,7 @@ Fellows have a choice to choose a living space or not. This system will be used 
 
 3. print_room <room_name> - Prints the names of all the people in room_name on the screen.
 
-4. print_allocations [-o=filename] - Prints a list of allocations onto the screen. Specifying the optional -o option here outputs the registered allocations to a txt file. 
+4. print_allocations [-o=filename] - Prints a list of allocations onto the screen. Specifying the optional -o option here outputs the registered allocations to a txt file.
 
 5. print_unallocated [-o=filename] - Prints a list of unallocated people to the screen. Specifying the -o option here outputs the information to the txt file provided.
 
@@ -31,10 +31,9 @@ Fellows have a choice to choose a living space or not. This system will be used 
 
 7. load_people - Adds people to rooms from a txt file. This saves lines with errors to a file errors.txt in the root folder
 
-8. save_state [--db=sqlite_database] - Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified. This metthod takes a name of sqlite database you need to save data. It doesn't allow saving data t an already existing database. This can be enabled after ensuring that already existing records are not replicated. 
+8. save_state [--db=sqlite_database] - Persists all the data stored in the app to a SQLite database. Specifying the --db parameter explicitly stores the data in the sqlite_database specified. This metthod takes a name of sqlite database you need to save data. It doesn't allow saving data t an already existing database. This can be enabled after ensuring that already existing records are not replicated.
 
 9. load_state <sqlite_database> - Loads data from a database into the application. This requires some one to enter an already existing database that was saved using the save_state method.
 
 # Tests:
 This application has unittests in the folder dojo\tests.Please suggest areas for further testing.
-      
