@@ -92,6 +92,7 @@ class Dojo(object):
                     person_id = person_id.strip().lower()
                     self.persons[person_id] = Staff(person_id, last_name, first_name, person_type, wants_accommodation)
                     print(last_name.upper() + ' ' + first_name.upper() + ' has been successfully added.')
+                    self.allocate_room(person_id, person_type)
                     #Call Allocate room method to allocate rooms for this person
         else:
             #Alerts admin that the person type supplied is not correct
@@ -102,7 +103,9 @@ class Dojo(object):
         allocate_room method is used to automatically allocate persons to rooms
         :params person_id: Unique identifier of person in Dojo
         :params person_type: Identifies which type of staff to be written
-        :params wants_accommodation: This is an optional argument used by fellows if they want living_space. If it's allocated for staff. Living room is not created.
+        :params wants_accommodation: This is an optional argument used by
+        fellows if they want living_space. If it's allocated for staff.
+        Living room is not created.
         """
         if person_type.upper() in self.person_types:#Check if person is fellow
             offices_list = [] #Used to store offices that have available space
@@ -119,7 +122,10 @@ class Dojo(object):
                 print(self.persons[person_id].first_name + ' has been allocated office ' + random_office)
                 print(random_office)
             else:
-                self.fellows_who_missed_office.append(person_id) #Add Fellows name to list of fellows who have missed an office
+                if person_type.upper() == 'FELLOW':
+                    self.fellows_who_missed_office.append(person_id) #Add Fellows name to list of fellows who have missed an office
+                if person_type.upper() == 'STAFF':
+                    self.staff_who_missed_office_list.append(person_id) # Add  Staff to list of fellows who missed an office
                 print('There are no offices available for allocation, Create some!!!')
             #Check if Fellow Wants Accomodation
         if person_type.upper() == 'FELLOW':
