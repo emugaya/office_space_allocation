@@ -118,9 +118,11 @@ class Dojo(object):
                 print(self.office[random_office].members)
                 self.office[random_office].members.append(person_id) #Store person in the members list of that office
                 self.persons[person_id].proom_name = random_office #Store Office Room in Persons Room attribute
-                self.fellows_with_office_list.append(person_id) # Updates fellows with of list attributes
+                if person_type.upper() == 'FELLOW':
+                    self.fellows_with_office_list.append(person_id) # Update fellows_with_office_list
+                if person_type.upper() == 'STAFF':
+                    self.staff_with_office_list.append(person_id) # Update staff_with_office_list
                 print(self.persons[person_id].first_name + ' has been allocated office ' + random_office)
-                print(random_office)
             else:
                 if person_type.upper() == 'FELLOW':
                     self.fellows_who_missed_office.append(person_id) #Add Fellows name to list of fellows who have missed an office
