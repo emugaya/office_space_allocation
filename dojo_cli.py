@@ -4,14 +4,14 @@ This example uses docopt with the built in cmd module to demonstrate an
 interactive command application.
 
 Usage:
-    dojo.py create_room <room_type> <room_name> ...
-    dojo.py add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
-    dojo.py print_room <room_name>
-    dojo.py print_allocations [<filename>]
-    dojo.py print_unallocated [<filename>]
-    dojo.py reallocate_person <person_identifier> <new_room_name>
-    dojo.py save_state <--db=sqlite_database>
-    dojo.py load_people <filename>
+    create_room <room_type> <room_name> ...
+    add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]
+    print_room <room_name>
+    print_allocations [<filename>]
+    print_unallocated [<filename>]
+    reallocate_person <person_identifier> <new_room_name>
+    save_state <--db=sqlite_database>
+    load_people <filename>
 
     my_program (-h | --help | --version)
 
@@ -67,11 +67,26 @@ def docopt_cmd(func):
 my_dojo = Dojo()
 class DojoCLI(cmd.Cmd):
     intro = '                         Welcome to Dojo!:\n' \
-        + 'You can perform the list of command below\n'\
-        + ' (Type help for a list of commands that you will be using to .)'
+        + 'You can perform the list of command below:\n'\
+        +'\n'\
+        + '1. Create Room using: create_room <room_type> <room_name>\n'\
+        +'\n'\
+        +'2. Add Person using: add_person <person_id> <last_name> <first_name> <person_type> [<wants_accommodation>]\n'\
+        +'\n'\
+        +'3. Print out members in a room using: print_room <room_name>\n'\
+        +'\n'\
+        +'4. Print Allocations using: print_allocations [<filename>]\n'\
+        +'\n'\
+        +'5. Print out unallocated staff and fellows using: print_unallocated [<filename>]\n'\
+        +'\n'\
+        +'6. Reallocate Person to room: reallocate_person <person_identifier> <new_room_name>\n'\
+        +'\n'\
+        +'7. Save Application State to SQLite Database using: save_state <--db=sqlite_database>\n'\
+        +'\n'\
+        +'8. Load last state of Application from Database using: load_people <filename>\n'\
+        +'\n'\
+        + ' (Type help any time for a list of commands.)'
     prompt = '(Dojo: Enter Command to Proceed:) '
-    # file = None
-
 
     @docopt_cmd
     def do_create_room(self,arg):
