@@ -1,6 +1,7 @@
 # from myapp.dojo.models.person import Person, Staff, Fellow
 # from myapp.dojo.models.room import Office, LivingSpace
 # from myapp.dojo.database.database import *
+
 import os
 import sys
 import random
