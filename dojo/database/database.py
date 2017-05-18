@@ -8,9 +8,7 @@ from sqlalchemy import Sequence
 Base = declarative_base()
 
 class People(Base):
-    """
-    
-    """
+    """ This class is used to instantiate the people table in the database """
     __tablename__ = 'people'
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     person_id = Column(String)
@@ -21,7 +19,9 @@ class People(Base):
     proom_name = Column(String)
     lroom_name = Column(String)
 
+
 class Rooms(Base):
+    """ This class is used to instantiate the rooms table in the database """
     __tablename__ = 'rooms'
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     room_name = Column(String)
@@ -31,9 +31,8 @@ class Rooms(Base):
 
 
 class Lists(Base):
+    """ This class is used to instantiate the lists table in the database """
     __tablename__ = 'lists'
     id = Column(Integer, Sequence('user_id_seq'), primary_key=True)
     list_name = Column(String)
     list_string = Column(String)
-
-#Base.metadata.create_all(engine)
