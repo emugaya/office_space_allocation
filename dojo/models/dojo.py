@@ -162,7 +162,6 @@ class Dojo(object):
             if offices_list:
                 #randomly selects room and adds person to room
                 random_office = random.choice(offices_list)
-                print(self.office[random_office].members)
                 #Store person in the members list of that office
                 self.office[random_office].members.append(person_id)
                 #Store Office Room in Persons Room attribute
@@ -202,10 +201,7 @@ class Dojo(object):
                     print ('There are no livingspaces available for allocation,'\
                             + ' Create some')
                 else:
-                    print(living_space_list)
                     random_living_space_room = random.choice(living_space_list)
-                    print('Random living space ')
-                    print(random_living_space_room)
                     #Add this person the members in a particular living room
                     self.living_space[
                                     random_living_space_room
