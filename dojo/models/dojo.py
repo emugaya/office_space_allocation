@@ -183,7 +183,7 @@ class Dojo(object):
                     self.staff_who_missed_office_list.append(person_id)
                     # Add  Staff to list of fellows who missed an office
                 print('There are no offices available for allocation,'\
-                        ' Create some!!!')
+                        + ' Create some!!!')
             #Check if Fellow Wants Accomodation
         if person_type.upper() == 'FELLOW':
             if wants_accommodation == 'Y':
@@ -199,7 +199,7 @@ class Dojo(object):
                     #Add name to persons who missed Living space
                     self.fellows_who_missed_living_space.append(person_id)
                     print ('There are no livingspaces available for allocation,'\
-                    ' Create some')
+                            + ' Create some')
                 else:
                     print(living_space_list)
                     random_living_space_room = random.choice(living_space_list)
@@ -402,9 +402,9 @@ class Dojo(object):
         room to another as long as the room name is correct and has space. Staff
         cannot be reallocated a living space.
 
-        :param person_id:
-        :param new_room_name:
-        :return
+        :param person_id: unique identifier of a person
+        :param new_room_name: new romm that person is being assigned to
+
         """
         new_room_name = new_room_name.lower().strip()
         if person_id in self.persons.keys():
@@ -554,7 +554,7 @@ class Dojo(object):
                                        proom_name = self.persons[key].proom_name)
                         session.add(new_person)
                         session.commit
-                    #This if statement is used to add Staff to People table in the database
+                    #This if statement is used to add Fellows to People table in the database
                     if self.persons[key].person_type.upper() == 'FELLOW':
                         new_person = People(
                                         person_id = self.persons[key].person_id,
