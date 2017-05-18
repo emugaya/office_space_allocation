@@ -6,9 +6,7 @@ __pycache__
 CP1-Python-OfficeSpaceAllocationpublicversion.pdf
 .cache
 __init__.py
-mugaya.txt
-test_data.txt
 resources
 *.db
-read_data.txt
+*.txt
 *.xml
