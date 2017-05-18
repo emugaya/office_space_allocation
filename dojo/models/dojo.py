@@ -628,6 +628,7 @@ class Dojo(object):
                 DBSession = sessionmaker(bind=engine)
                 session = DBSession()
                 Base.metadata.create_all(engine)
+                """ Rebuid lists from lists database table """
                 for instance in session.query(Lists):
                     if instance.list_name == 'fellows_with_living_room_list':
                         self.fellows_with_living_room_list = instance.list_string.split()
@@ -645,6 +646,7 @@ class Dojo(object):
                         self.staff_who_missed_office_list = instance.list_string.split()
                     if instance.list_name == 'all_rooms_list':
                         self.all_rooms_list = instance.list_string.split()
+                """Load persons dictionary with people from the people table in tdatabase"""
                 for instance in session.query(People):
                     if instance.person_type.upper() =='STAFF':
                         self.persons[instance.person_id] = Staff(instance.person_id,
@@ -658,6 +660,7 @@ class Dojo(object):
                                                                 instance.wants_accommodation,
                                                                 instance.proom_name,
                                                                 instance.lroom_name)
+                """ Load office and living_space dictionaries with data from rooms table in the database """
                 for instance in session.query(Rooms):
                     if instance.room_type.upper() == 'OFFICE':
                         self.office[instance.room_name] = Office(instance.room_name)
