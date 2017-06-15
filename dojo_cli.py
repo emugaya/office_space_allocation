@@ -83,7 +83,7 @@ class DojoCLI(cmd.Cmd):
         +'\n'\
         +'7. Save Application State to SQLite Database using: save_state <--db=sqlite_database>\n'\
         +'\n'\
-        +'8. Load last state of Application from Database using: load_people <filename>\n'\
+        +'8. Load last state of Application from Database using: load_state <sqlite_database>\n'\
         +'\n'\
         + ' (Type help any time for a list of commands.)'
     prompt = '(Dojo: Enter Command to Proceed:) '
