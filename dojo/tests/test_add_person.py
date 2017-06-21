@@ -1,7 +1,6 @@
 import unittest
-from myapp.dojo.models.dojo import *
-from myapp.dojo.models.person import *
-from myapp.dojo.models.room import *
+from dojo.models.dojo import Dojo
+
 
 class TestAddPersonRoom(unittest.TestCase):
     """
@@ -10,7 +9,7 @@ class TestAddPersonRoom(unittest.TestCase):
     """
 
     def test_add_person_succesfully(self):
-        """
+        """"
         This Test Case is to check whether persons are succesfully created or added in the Dojo.
         """
         my_dojo = Dojo()
@@ -49,3 +48,7 @@ class TestAddPersonRoom(unittest.TestCase):
         new_person_count = len(my_dojo.persons)
         self.assertEqual(new_person_count - initial_person_count, 0,
                         msg ='Invalid Person types are not added')
+
+
+if __name__ == '__main__':
+    unittest.main()
