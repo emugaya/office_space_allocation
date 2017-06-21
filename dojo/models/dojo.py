@@ -1,6 +1,6 @@
-# from myapp.dojo.models.person import Person, Staff, Fellow
-# from myapp.dojo.models.room import Office, LivingSpace
-# from myapp.dojo.database.database import *
+from dojo.models.person import Person, Staff, Fellow
+from dojo.models.room import Office, LivingSpace
+from dojo.database.database import *
 
 import os
 import sys
@@ -9,9 +9,9 @@ import random
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from dojo.models.person import Person, Staff, Fellow
-from dojo.models.room import Office, LivingSpace
-from dojo.database.database import Base, People, Lists, Rooms
+# from dojo.models.person import Person, Staff, Fellow
+# from dojo.models.room import Office, LivingSpace
+# from dojo.database.database import Base, People, Lists, Rooms
 
 
 class Dojo(object):
@@ -237,7 +237,7 @@ class Dojo(object):
                 for name in self.office[room_name].members:
                     s = self.persons[name].last_name \
                         + ' ' + self.persons[name].first_name + ','
-                    print(s, end =" "  )
+                    print(s, end =" ")
         #Check if room is an living space
         elif room_name.lower() in self.living_space:
             #Print to the screen room has no members if empty
