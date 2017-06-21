@@ -1,7 +1,5 @@
 import unittest
-from myapp.dojo.models.dojo import *
-from myapp.dojo.models.person import *
-from myapp.dojo.models.room import *
+from dojo.models.dojo import Dojo
 
 class TestAllocateRoom(unittest.TestCase):
     """
