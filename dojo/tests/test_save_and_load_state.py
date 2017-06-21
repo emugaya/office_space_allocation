@@ -1,8 +1,5 @@
 import unittest
-
-from myapp.dojo.models.dojo import Dojo
-from myapp.dojo.models.person import Person, Fellow, Staff
-from myapp.dojo.models.room import Room, Office, LivingSpace
+from dojo.models.dojo import Dojo
 
 class TestSaveAndLoadState(unittest.TestCase):
     """ This test case is used to test persistence of data to the database.
