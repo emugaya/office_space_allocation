@@ -1,6 +1,5 @@
 import unittest
-
-from myapp.dojo.models.dojo import Dojo
+from dojo.models.dojo import Dojo
 
 class TestCreateRoom(unittest.TestCase):
     """
