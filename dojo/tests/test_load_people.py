@@ -43,11 +43,43 @@ class TestLoadPeople(unittest.TestCase):
         This tests whether a user gets a notification that the file provided is incorrect
         when they supply a file that doesn't exist or not txt.
         """
-        pass
+        #create new Dojo Object.
+        my_dojo = Dojo()
+        #create an office room in the dojo
+        my_dojo.create_room('office', ['Blue'])
+        #create a living room in the dojo
+        my_dojo.create_room('livingspace', ['Pink'])
+        # Add 6 people(4 staff and 2 fellows) to dojo from text file by calling load_people
+        self.assertEqual(my_dojo.load_people('qwerty'),
+                        "File Provided is either not a .txt or it doesnt exist",
+                        msg="Loading wrong file type or non existing file doesnt give an error")
 
     def test_load_people_generates_file_with_errors_in_upload_file(self):
         """
         This tests whether load_people generates a file that has lines with errors for a user
         during the load_people function and informs them that there were errors.
         """
-        pass
+        #create new Dojo Object.
+        my_dojo = Dojo()
+        #create an office room in the dojo
+        my_dojo.create_room('office', ['Blue'])
+        #create a living room in the dojo
+        my_dojo.create_room('livingspace', ['Pink'])
+        # Load people with one line with errors
+        my_dojo.load_people('load_people_data_errors')
+        #Check whether filealready exists and delete it.
+        try:
+            os.remove(errors.txt)
+        except OSError:
+                pass
+        # Test whether load_people generates errors.txt
+        self.assertEqual(os.path.exists('errors.txt'),True , msg="File not created")
+        file_line = ''
+        with open('errors.txt') as f:
+            file_line = f.readline()
+        self.assertEqual(file_line,"101 Uganda line number (7)",msg="Errors file has incorrect information")
+        #Delete errors.txt file after test
+        try:
+            os.remove(errors.txt)
+        except OSError:
+                pass

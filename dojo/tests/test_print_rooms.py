@@ -44,9 +44,9 @@ class TestPrintRoom(unittest.TestCase):
         my_dojo.load_people('load_people_data')
         #Test that user gets an error msg that wrong roomnamewas supplied
         self.assertEqual(my_dojo.print_room('yellow'), "Your room doesn't exist",
-                                                      msg = "User doesn't get notification about wrong room name")
+                                                      msg = "User not notified when wrong room name is supplied name")
         self.assertEqual(my_dojo.print_room('green'), "Your room doesn't exist",
-                                                      msg = "User doesn't get notification about wrong room name")
+                                                      msg = "User not notified when wrong room name is supplied name")
 
     def test_print_empty_room(self):
         """
@@ -63,5 +63,5 @@ class TestPrintRoom(unittest.TestCase):
         #Test that user gets an error msg that wrong roomnamewas supplied
         my_dojo.create_room('livingspace', ['Green'])
 
-        self.assertEqual(my_dojo.print_room('green'),"GREEN Room has no members",
+        self.assertEqual(my_dojo.print_room('green'),"Room has no members no members",
                                                     msg="User not notified that room has no members")
