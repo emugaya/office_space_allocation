@@ -178,9 +178,13 @@ class Dojo(object):
             else:
                 if person_type.upper() == 'FELLOW':
                     # Add Fellows name to fellows_who_missed_office list
-                    self.fellows_who_missed_office.append(person_id)
+                    s = self.persons[person_id].person_id + ' '+ self.persons[person_id].first_name \
+                        + ' ' + self.persons[person_id].last_name
+                    self.fellows_who_missed_office.append(s)
                 if person_type.upper() == 'STAFF':
-                    self.staff_who_missed_office_list.append(person_id)
+                    s = self.persons[person_id].person_id + ' '+ self.persons[person_id].first_name \
+                        + ' ' + self.persons[person_id].last_name
+                    self.staff_who_missed_office_list.append(s)
                     # Add  Staff to list of fellows who missed an office
                 print('There are no offices available for allocation,'\
                         + ' Create some!!!')
@@ -197,7 +201,9 @@ class Dojo(object):
                 #Check if living spaces are not available and inform user
                 if not living_space_list:
                     #Add name to persons who missed Living space
-                    self.fellows_who_missed_living_space.append(person_id)
+                    s = self.persons[person_id].person_id + ' '+ self.persons[person_id].first_name \
+                        + ' ' + self.persons[person_id].last_name
+                    self.fellows_who_missed_living_space.append(s)
                     print ('There are no livingspaces available for allocation,'\
                             + ' Create some')
                 else:
@@ -222,6 +228,7 @@ class Dojo(object):
         This method prints names of members in a room supplied.
         It takes room name as an argument, and prints to the screen the members
         """
+        room_members_list =[]
         #Check if room_name provided is string
         if not isinstance(room_name,str):
             print ("Room name must be a string")
@@ -229,33 +236,34 @@ class Dojo(object):
         if room_name.lower() in self.office: #Check if room is an office
             #Print to the screen room has no members if empty
             if len(self.office[room_name].members) == 0:
-                print(room_name.upper() + ' has no members')
+                return ('Room has no members no members')
             else:
-                #Print to the screen the Room and it's members
-                print ('Office Room '+ room_name.upper())
-                print('------------------------------------------------------')
+                #Create string to be the screen the Room and it's members
                 for name in self.office[room_name].members:
-                    s = self.persons[name].last_name \
-                        + ' ' + self.persons[name].first_name + ','
-                    print(s, end =" ")
-        #Check if room is an living space
+                    s = self.persons[name].person_id\
+                        + ' ' + self.persons[name].last_name \
+                        + ' ' +self.persons[name].first_name + ''
+                    room_members_list.append(s)
+                #Return Dictionary with room name as key and list of members as values
+                return{room_name:room_members_list}
+        #Check if room is a living space
         elif room_name.lower() in self.living_space:
             #Print to the screen room has no members if empty
             if len(self.living_space[room_name].members) == 0:
-                print('Office ' + room_name.upper() + ' has no members')
-
+                return('Room has no members no members')
             else:
                 #Print to the screen the Room and it's members
-                print ('Living Space Room '+room_name.upper())
-                print('------------------------------------------------------')
                 for name in self.living_space[room_name].members:
-                    s = self.persons[name].last_name \
-                        + ' ' +self.persons[name].first_name + ','
-                    print(s ,end=" ")
-                print()
+                    s = self.persons[name].person_id\
+                        + ' ' + self.persons[name].last_name \
+                        + ' ' +self.persons[name].first_name + ''
+                    #Add members to
+                    room_members_list.append(s)
+                #Return Dictionary with room name as key and list of members as values
+                return {room_name:room_members_list}
         else:
             #Inform user that they want print does not exist
-            print('Your room doesn\'t exist')
+            return('Your room doesn\'t exist')
 
     def print_allocations(self, filename=""):
         """
@@ -267,32 +275,48 @@ class Dojo(object):
         :param filename: Refers to name of .txt file to be written to.
         It prints to the screen if this parameter is not specified
         """
-        if not filename:
-            #Print to the Screemn if File name not Provided
-            for room_name in self.all_rooms_list:
-                #Print Office Spaces first
-                if room_name.lower() in self.office:
-                    print('\n')
-                    print('Office Room '+ room_name.upper()+'\n')
-                    print('-------------------------------------------------\n')
+        #room_allocations dictionary is used to build a dictionary that will
+        #be used to print to screen or file
+        room_allocations= {}
+        if len(self.all_rooms_list) == 0:
+            return "There are no rooms to print allocations for!"
+        # Build or Add to room_allocations dictionary rooms as keys ,
+        # and lists of members in them as values
+        for room_name in self.all_rooms_list:
+            if room_name.lower() in self.office:
+                #Variable to hold list of persons in an office
+                persons_in_office = []
+                #Add persons to persons_in_office list
+                if len(self.office[room_name].members) > 0:
                     for name in self.office[room_name].members:
-                         s = (self.persons[name].person_id + ' '
+                        # Assemble person_id, first_name, and lastname in one string
+                        s = (self.persons[name].person_id + ' '
                                 +self.persons[name].last_name + ' '
-                                +self.persons[name].first_name +', ')
-                         print(s ,end=" ")
+                                +self.persons[name].first_name)
+                        #Add person with details to persons_in_office
+                        persons_in_office.append(s)
+                    #Add room as key and persons_in_office list as value to dictionary
+                    room_allocations[room_name] = persons_in_office
 
-                    print('\n')
-                    #Print Office Spaces first
-                if room_name.lower() in self.living_space:
-                    print('\n')
-                    print('Living Space Room '+room_name.upper()+'\n')
-                    print('---------------------------------------------------')
+            if room_name.lower() in self.living_space:
+                #Variable to hold list of persons in a livingspace
+                fellows_in_livingspace = []
+                if len(self.living_space[room_name].members) > 0:
                     for name in self.living_space[room_name].members:
+                        #Assemble person_id, first_name, and lastname in one string
                         s =(self.persons[name].person_id + ' '
                             +self.persons[name].last_name + ' '
-                            +self.persons[name].first_name + ', ')
-                        print(s ,end=" ")
-            print('\n')
+                            +self.persons[name].first_name)
+                        #Add person with details to fellows_in_livingspace list
+                        fellows_in_livingspace.append(s)
+                    #Add room as key and fellows_in_livingspace list as value to dictionary
+                    room_allocations[room_name] = fellows_in_livingspace
+
+        #Check whether filename has been supplied and return dictinary to be used to print to screen.
+        if not filename:
+            if len(room_allocations)==0:
+                return "All Rooms are empty"
+            return room_allocations
         else:
             #Print to Filename provided.
             #Create and open File for Writing
@@ -320,7 +344,9 @@ class Dojo(object):
                         + self.persons[name].last_name + ' '
                         + self.persons[name].first_name + ', ')
                     my_file.write('\n')
-            my_file.close() #Close File after writing
+            #Close File after writing
+            my_file.close()
+            return "Allocations Have been printed to file succesfully"
 
     def print_unallocated(self, filename=''):
         """
@@ -331,68 +357,58 @@ class Dojo(object):
         :param filename: Refers to name of .txt file to be written to.
         It prints to the screen if this parameter is not specified
         """
+        #Create an empty dictionary of unallocated staff categories
+        unallocated_persons = {}
+        #Add Staff who missed offices to unallocated_persons dictionary
+        if len(self.staff_who_missed_office_list):
+            unallocated_persons['staff_who_missed_office_list'] = self.staff_who_missed_office_list
+        #Add Fellows who missed offices to  unallocated_persons dictionary
+        if len(self.fellows_who_missed_office):
+            unallocated_persons['fellows_who_missed_office'] = self.fellows_who_missed_office
+        #Add Staff who missed livingspace to unallocated_persons dictionary
+        if len(self.fellows_who_missed_living_space):
+            unallocated_persons['fellows_who_missed_living_space'] = self.fellows_who_missed_living_space
+        #Check whether user passed filename to the method, if no return information to be printed on the screen.
         if not filename:
-            #Print to the Screen if file name not provided
-            print('\n')
-            print('Staff who missed office space')
-            print('---------------------------------------------------------\n')
-            if len(self.staff_who_missed_office_list):
-                for staff in self.staff_who_missed_office_list:
-                    s =(self.persons[staff].person_id + ' '
-                        + self.persons[staff].first_name + ' '
-                        +self.persons[staff].last_name +", ")
-                    print(s ,end=" ")
-            #Print Fellows who missed office
-            print('\n')
-            print('Fellows who missed office space')
-            print('---------------------------------------------------------\n')
-            if len(self.fellows_who_missed_office):
-                for staff in self.fellows_who_missed_office:
-                    s = (self.persons[staff].person_id + ' '
-                        + self.persons[staff].first_name + ' '
-                        +self.persons[staff].last_name+", ")
-                    print(s ,end=" ")
-            print('\n')
-            print('Fellows who wanted but missed Living Space')
-            print('---------------------------------------------------------\n')
-            if len(self.fellows_who_missed_living_space):
-                for staff in self.fellows_who_missed_living_space:
-                    s = (self.persons[staff].person_id + ' '
-                        + self.persons[staff].first_name + ' '
-                        +self.persons[staff].last_name+", ")
-                    print(s ,end=" ")
-            print('\n')
+            #Check whether there are no unallocated persons
+            if len(unallocated_persons) == 0:
+                return "There are no unallocated staff or fellows in the dojo"
+            #Return dictionary of unallocated_persons to docopt for printing
+            return unallocated_persons
         else:
-            #Write to File if file name is provide. File is saved in root folder
-            #Creat and open file for writing
-            new_file = open(filename + ".txt", "w")
-            new_file.write('Staff who missed office space\n')
-            new_file.write('------------------------------------------------\n')
-            if len(self.staff_who_missed_office_list):
-                for staff in self.staff_who_missed_office_list:
-                    new_file.write(self.persons[staff].person_id + ' '
-                                    + self.persons[staff].first_name + ' '
-                                    +self.persons[staff].last_name +", ")
-            new_file.write('\n')
-            #Write Fellow who missed office
-            new_file.write('Fellows who missed office space\n')
-            new_file.write('------------------------------------------------\n')
-            if len(self.fellows_who_missed_office):
-                for staff in self.fellows_who_missed_office:
-                    new_file.write(self.persons[staff].person_id + ' '
-                                    + self.persons[staff].first_name + ' '
-                                    +self.persons[staff].last_name +", ")
-            new_file.write('\n')
-            #Write to file Fellows who missed living space
-            new_file.write('Fellows who wanted but missed Living Space\n')
-            new_file.write('------------------------------------------------\n')
-            if len(self.fellows_who_missed_living_space):
-                for staff in self.fellows_who_missed_living_space:
-                    new_file.write(self.persons[staff].person_id + ' '
-                                    + self.persons[staff].first_name + ' '
-                                    +self.persons[staff].last_name +", ")
-            new_file.write('\n')
-            new_file.close()#Close File after writing
+            if len(unallocated_persons) == 0:
+                return "There are no unallocated staff or fellows in the dojo"
+            else:
+                new_file = open(filename + ".txt", "w")
+                for key in unallocated_persons:
+                    #Write Staff who missed office to file
+                    if key == 'staff_who_missed_office_list':
+                        new_file.write('Staff who missed Offices \n')
+                        new_file.write('-'* 100 +'\n')
+                        for name in unallocated_persons[key]:
+                            new_file.write(name +', ')
+                        new_file.write('\n')
+                        new_file.write('\n')
+                    #Write Fellows who missed office to File
+                    if key == 'fellows_who_missed_office':
+                        new_file.write('Fellows who missed Offices \n')
+                        new_file.write('-'* 100 +'\n')
+                        for name in unallocated_persons[key]:
+                            new_file.write(name + ', ')
+                        new_file.write('\n')
+                        new_file.write('\n')
+                    #Write Fellows who missed Livingspace to the File
+                    if key == 'fellows_who_missed_living_space':
+                        new_file.write('Fellows wanted but Missed Livingspace \n')
+                        new_file.write('-'* 100 +'\n')
+                        for name in unallocated_persons[key]:
+                            new_file.write(name + ', ')
+                        new_file.write('\n')
+                        new_file.write('\n')
+                #Close File after writing
+                new_file.close()
+                return ('Unallocated Staff and Fellows written to file successfully')
+
     def reallocate_person(self, person_id, new_room_name):
         """
         reallocate_person method is used to change a Fellow or Staff from one
@@ -463,41 +479,53 @@ class Dojo(object):
         """
         #Open file to write lines with errors to during load_people
         my_error_file = open('errors' + '.txt','w')
-        if not filename:
-            print('Please specify name of the file you want to read data from')
+        #Check whether file exists in the application root folder
+        if os.path.exists(filename+'.txt') == False:
+            return "File Provided is neither .txt nor does it exist"
+        # if os.stat(filename+'.txt') == 0:
+        #     return "File is empty"
         else:
+            #print("File is empty")
             try:
                 my_file_read = open(filename + '.txt','r')
                 for num, line in enumerate(my_file_read, 1):
+                    # Remove newline character from the lines in the file
                     line = line.strip()
+                    #Split the line into a list
                     list_of_arguments_in_file = line.split()
-                    #print(list_of_arguments_in_file)
+                    #Assemble split line into variables that can be used to call add_person
+                    # This takes care of cases where a fellow has requested for accomodation
                     if len(list_of_arguments_in_file) == 5:
                         person_id = list_of_arguments_in_file[0]
                         last_name = list_of_arguments_in_file[1]
                         first_name = list_of_arguments_in_file[2]
                         person_type = list_of_arguments_in_file[3]
                         wants_accommodation = list_of_arguments_in_file[4]
+                        #Add Person to the dojo using values from the line
                         self.add_person(person_id, last_name,
                                         first_name, person_type,
                                         wants_accommodation)
+                    #Assemble split line into variables that can be used to call add_person
+                    # This takes care of cases where a fellow has not requested for accomodation
                     elif len(list_of_arguments_in_file) == 4:
                         person_id = list_of_arguments_in_file[0]
                         last_name = list_of_arguments_in_file[1]
                         first_name = list_of_arguments_in_file[2]
                         person_type = list_of_arguments_in_file[3]
+                        #Add Person to the dojo using values from the line
                         self.add_person(person_id, last_name,
                                         first_name, person_type,
                                         wants_accommodation)
+                    #Write to errors.txt lines with errors
                     else:
                         my_error_file.write(line
                                             +' line number ('+ str(num)+')\n')
                         print('Arguments in this line were incorrect: '\
                                 + 'line(' + str(num)+')')
-                        print('Lines with errors have been saved to the '\
-                                + 'file errors.txt in youre root folder')
+                return "File read succesfully, lines with errors"\
+                       " have been written to 'errors.txt'"
             except:
-                print('File Provided is either not a .txt or it doesnt exist')
+                return ('File Provided is either not a .txt or it doesnt exist')
         my_error_file.close()
     def save_state(self, sqlite_database_name):
         """
@@ -507,7 +535,7 @@ class Dojo(object):
         :params sqlite_database_name: name of sqlite database to persist data to.
         """
         if os.path.isfile('./'+sqlite_database_name+'.db'):
-            print('That file name already exists, '\
+            return ('That file name already exists, '\
                    + 'please provide a different filename')
         else:
             engine = create_engine('sqlite:///'+sqlite_database_name+'.db')
@@ -608,6 +636,7 @@ class Dojo(object):
                 session.add(new_list)
                 session.commit()
             session.close() #Close Database session
+            return "State saved succesfully\n"
 
 
     def load_state(self, sqlite_database_name):
@@ -666,8 +695,8 @@ class Dojo(object):
                         self.living_space[instance.room_name] = LivingSpace(instance.room_name)
                         self.living_space[instance.room_name].members = instance.members.split()
                 session.close()
-                print('State Loaded Succesfully')
+                return ('State Loaded Succesfully')
             else:
-                print('Database filename provided does not exist')
+                return ('Database filename provided does not exist')
         except:
-            print('State loading unsuccesful. Contact administrator')
+            return ('State loading unsuccesful. Contact administrator')
