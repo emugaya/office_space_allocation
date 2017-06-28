@@ -26,7 +26,6 @@ import sys
 import cmd
 from docopt import docopt, DocoptExit
 from dojo.models.dojo import Dojo
-import pickle
 
 # from sqlalchemy import create_engine
 # from sqlalchemy.ext.decorator import declarative_base
@@ -105,30 +104,90 @@ class DojoCLI(cmd.Cmd):
         wants_accommodation = arg['<wants_accommodation>']
 
         my_dojo.add_person(person_id, last_name, first_name, person_type, wants_accommodation)
+        print('\n')
 
     @docopt_cmd
     def do_print_room(self, arg):
         """Usage: print_room <room_name> """
         room_name = arg['<room_name>']
-        my_dojo.print_room(room_name)
+        # Call print_room method in the dojo  and assign result to print_room variable
+        print_room = my_dojo.print_room(room_name)
+        #Print to screen Room name and members in it.
+        if isinstance(print_room, dict):
+            for key in print_room:
+                print (key.capitalize() + " Room")
+                print ('-'*100)
+                for member in print_room[key]:
+                    print(member, end=', ')
+                print('\n')
+        else:
+            print (print_room + "\n")
+
 
     @docopt_cmd
     def do_print_allocations(self,arg):
         """Usage: print_allocations [<filename>] """
         filename = arg['<filename>']
-        my_dojo.print_allocations(filename)
+        #Call print_allocations method on the dojo and pass the result
+        #to a variable allocations.
+        allocations = my_dojo.print_allocations(filename)
+        #check whether the result is a dictionary, if yes then
+        #we print to the screen the room and members in it the dictionary returned
+        if isinstance(allocations,dict):
+            for key in allocations:
+                # Print room name to the screen
+                print (key.capitalize() +" Room")
+                print ('-'* 100)
+                # Persons in room to the screen
+                for name in allocations[key]:
+                    print(name, end=', ')
+                print('\n')
+        else:
+            print (allocations)
 
     @docopt_cmd
     def do_print_unallocated(self,arg):
         """Usage: print_unallocated [<filename>] """
         filename = arg['<filename>']
-        my_dojo.print_unallocated(filename)
+        #Call print_unallocated method on the dojo and pass the result
+        #to a variable unallocated.
+        unallocated = my_dojo.print_unallocated(filename)
+        #check whether the result is a dictionary, if yes then
+        #we are printing to the screen the values of the dictionary
+        if isinstance(unallocated,dict):
+            for key in unallocated:
+                #Print Staff who missed office to screen
+                if key == 'staff_who_missed_office_list':
+                    print('Staff who missed Offices')
+                    print('-'* 100)
+                    for name in unallocated[key]:
+                        print(name, end=', ')
+                    print('\n')
+                #Print Fellows who missed office to screen
+                if key == 'fellows_who_missed_office':
+                    print('Fellows who missed Offices')
+                    print('-'* 100)
+                    for name in unallocated[key]:
+                        print(name, end=', ')
+                    print('\n')
+                #Print Fellows who missed Livingspace to the screen
+                if key == 'fellows_who_missed_living_space':
+                    print('Fellows wanted but Missed Livingspace')
+                    print('-'* 100)
+                    for name in unallocated[key]:
+                        print(name, end=', ')
+                    print('\n')
+        else:
+            #Print any error messages / notifications returned to the screen
+            print (unallocated)
+        # print('\n')
 
     @docopt_cmd
     def do_load_people(self, arg):
         """Usage: load_people <filename> """
         filename = arg['<filename>']
-        my_dojo.load_people(filename)
+        load_people = my_dojo.load_people(filename)
+        print (load_people)
 
     @docopt_cmd
     def do_reallocate_person(self,arg):
@@ -137,18 +196,19 @@ class DojoCLI(cmd.Cmd):
         new_room_name = arg['<new_room_name>']
         my_dojo.reallocate_person(person_identifier, new_room_name)
 
+
     @docopt_cmd
     def do_save_state(self, arg):
         """Usage: save_state <--db=sqlite_database> """
         sqlite_database_name = arg['<--db=sqlite_database>']
-        my_dojo.save_state(sqlite_database_name)
+        print(my_dojo.save_state(sqlite_database_name))
+
 
     @docopt_cmd
     def do_load_state(self,arg):
-        """Usage: save_state [<sqlite_database>] """
+        """Usage: load_state <sqlite_database> """
         sqlite_database = arg['<sqlite_database>']
-        my_dojo.load_state(sqlite_database)
-
+        print(my_dojo.load_state(sqlite_database))
 
     def do_quit(self, arg):
         """Quits out of Interactive Mode."""
