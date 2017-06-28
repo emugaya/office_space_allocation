@@ -18,15 +18,15 @@ class TestPrintRoom(unittest.TestCase):
         # Add 6 people(4 staff and 2 fellows) to dojo from text file by calling load_people
         my_dojo.load_people('load_people_data')
         #Test that printing and existing room with members is sucessful.
-        self.assertEqual(my_dojo.print_room('pink'),{'pink' :['Roza Kobel',
-                                                             'Paul Kobel']},
+        self.assertEqual(my_dojo.print_room('pink'),{'pink' :['1002 Roza Kobel',
+                                                             '1003 Paul Kobel']},
                                                     msg='Print room unsuccesful')
-        self.assertEqual(my_dojo.print_room('blue'),{'blue':['Mugaya Ezekiel',
-                                                           'Roza Kobel',
-                                                           'Favour Kwagala',
-                                                           'Joyce Mummy',
-                                                           'Isiaha Katumwa',
-                                                           'Paul Kobel']},
+        self.assertEqual(my_dojo.print_room('blue'),{'blue':['1001 Mugaya Ezekiel',
+                                                           '1002 Roza Kobel',
+                                                           '1004 Favour Kwagala',
+                                                           '1005 Joyce Mummy',
+                                                           '1006 Isiaha Katumwa',
+                                                           '1003 Paul Kobel']},
                                                  msg="Print Room unsuccesful")
 
     def test_printing_unexisting_room_unsuccessful(self):

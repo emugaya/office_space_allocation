@@ -19,14 +19,14 @@ class TestPrintAllocations(unittest.TestCase):
         my_dojo.create_room('livingspace', ['Pink'])
         # Add 6 people(4 staff and 2 fellows) to dojo from text file by calling load_people
         my_dojo.load_people('load_people_data')
-        self.assertEqual(my_dojo.print_allocations,
-                               {'blue': ['Mugaya Ezekiel',
-                                          'Roza Kobel',
-                                          'Favour Kwagala',
-                                          'Joyce Mummy',
-                                          'Isiaha Katumwa',
-                                          'Paul Kobel'],\
-                                'pink': ['Roza Kobel','Paul Kobel']
+        self.assertEqual(my_dojo.print_allocations(),
+                               {'blue': ['1001 Mugaya Ezekiel',
+                                         '1002 Roza Kobel',
+                                         '1004 Favour Kwagala',
+                                         '1005 Joyce Mummy',
+                                         '1006 Isiaha Katumwa',
+                                         '1003 Paul Kobel'],
+                                'pink': ['1002 Roza Kobel','1003 Paul Kobel']
                                 },
                                 msg = "Print Allocations doesn't return values to be printed to screen"
                                 )
@@ -44,8 +44,9 @@ class TestPrintAllocations(unittest.TestCase):
         my_dojo.load_people('load_people_data')
 
         self.assertEqual(my_dojo.print_allocations('test_print_allocations_file'),
-                                                   "Allocations Have been \
-                                                   printed to file succesfully",
-                                                   msg="Allocations not succesfully printed to file"
-                                                   )
+                         "Allocations Have been printed to file succesfully",
+                         msg="Allocations not succesfully printed to file"
+                            )
+        self.assertEqual(os.path.exists('test_print_allocations_file.txt'),True , msg="File not created")
+
         self.assertEqual(os.path.exists('test_print_allocations_file.txt'),True , msg="File not created")

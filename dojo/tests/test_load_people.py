@@ -1,4 +1,5 @@
 import unittest
+import os
 from dojo.models.dojo import Dojo
 
 class TestLoadPeople(unittest.TestCase):
@@ -51,7 +52,7 @@ class TestLoadPeople(unittest.TestCase):
         my_dojo.create_room('livingspace', ['Pink'])
         # Add 6 people(4 staff and 2 fellows) to dojo from text file by calling load_people
         self.assertEqual(my_dojo.load_people('qwerty'),
-                        "File Provided is either not a .txt or it doesnt exist",
+                        "File Provided is neither .txt nor does it exist",
                         msg="Loading wrong file type or non existing file doesnt give an error")
 
     def test_load_people_generates_file_with_errors_in_upload_file(self):
@@ -65,21 +66,37 @@ class TestLoadPeople(unittest.TestCase):
         my_dojo.create_room('office', ['Blue'])
         #create a living room in the dojo
         my_dojo.create_room('livingspace', ['Pink'])
-        # Load people with one line with errors
-        my_dojo.load_people('load_people_data_errors')
         #Check whether filealready exists and delete it.
         try:
-            os.remove(errors.txt)
+            os.remove('errors.txt')
         except OSError:
                 pass
+        # Load people with one line with errors
+        my_dojo.load_people('load_people_data_errors')
         # Test whether load_people generates errors.txt
         self.assertEqual(os.path.exists('errors.txt'),True , msg="File not created")
         file_line = ''
         with open('errors.txt') as f:
-            file_line = f.readline()
+            file_line = f.readline().strip()
         self.assertEqual(file_line,"101 Uganda line number (7)",msg="Errors file has incorrect information")
         #Delete errors.txt file after test
         try:
-            os.remove(errors.txt)
+            os.remove('errors.txt')
         except OSError:
                 pass
+
+    def test_load_people_notifies_users_if_file_has_been_read_and_where_errors_are_saved(self):
+        """
+        This tests whether a user gets a notification when a file has been read
+        succesfully and where errors have been saved errors.txt
+        """
+        #create new Dojo Object.
+        my_dojo = Dojo()
+        #create an office room in the dojo
+        my_dojo.create_room('office', ['Blue'])
+        #create a living room in the dojo
+        my_dojo.create_room('livingspace', ['Pink'])
+        # Add 6 people(4 staff and 2 fellows) to dojo from text file by calling load_people
+        self.assertEqual(my_dojo.load_people('load_people_data_errors'),
+                    "File read succesfully, lines with errors have been written to 'errors.txt'",
+                    msg="Loading wrong file type or non existing file doesnt give an error")
